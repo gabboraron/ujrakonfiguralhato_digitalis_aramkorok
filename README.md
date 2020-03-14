@@ -1,5 +1,6 @@
 # Tartalom
 - [Téma 1 - bevezetés, FPGA alapok](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#téma-1---bevezetés-fpga-alapok)
+- [Téma 2 - FPGA áramkörök szerkezete]()
 
 ---------
 
@@ -15,9 +16,9 @@ RAM alapú FPGAba a bekapcsolás után be kell konfigurálni a **bitfolyamot** a
 ## Modulok:
 - konfigurálható logikai tömbök: logikai kapuk, kereső táblázat, osztott memória, bistabil áramkörök, multiplexxer áramkörök.
 - ki/be meneti tömbök
-- blockRAM
+- blockRAM ([BRAM](https://www.nandland.com/articles/block-ram-in-fpga.html))
 - digitális jelfeldolgozó modul (DSP) vagy szorzó áramkör (MUL)
-- órajel menedzselő áramkör
+- órajel menedzselő áramkör ([DCM - digital clock manager](https://en.wikipedia.org/wiki/Digital_clock_manager))
 - beágyazott processzormagok
 - Gigabit tranceiver modulok
 
@@ -64,4 +65,7 @@ RAM alapú FPGAba a bekapcsolás után be kell konfigurálni a **bitfolyamot** a
 - indulás **master**/**slave** módban
 - működés közbeni újrakonfigurálás: részleges, dinamikus újrakonfigurálás / teljes átkapcsolás
 - magas szintű programozási nyelvek (HLS) alkalmazása
+
 -----
+
+# Téma 2 - FPGA áramkörök szerkezete
