@@ -1,5 +1,5 @@
 # Tartalom
-- [Téma 1 - bevezetés, FPGA alapok]()
+- [Téma 1 - bevezetés, FPGA alapok](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#téma-1---bevezetés-fpga-alapok)
 
 ---------
 
@@ -34,10 +34,15 @@ RAM alapú FPGAba a bekapcsolás után be kell konfigurálni a **bitfolyamot** a
 - elég az FPGA újrakonfigurálása, nem szükséges az áramkör újratervezése
 
 > **=>** magas fokú párhuzamosítás
+>
 > **=>** pipeline és párhuzamos pipeline
+>
 > **=>** műkődés közbeni újrakonfigurálás
+> 
 > **=>** jó sebesség
+> 
 > **=>** időkritikus egységek külön hardveregységben
+> 
 > **=>** egyszerű illesztés létező eszközzel
 
 ## Mi valósítható meg FPGA-ban?
