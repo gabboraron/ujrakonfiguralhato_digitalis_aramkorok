@@ -86,12 +86,17 @@ RAM alapú FPGAba a bekapcsolás után be kell konfigurálni a **bitfolyamot** a
 
 ### BRAM (Block RAM) modulok
 - oszlopokba szervezve konfigurálható logikai tömbök (CLB) mellett
+- különálló egységként, rugalmasan méretezhető az adatsínszélesség/címtartomány
+- alkalmazható kétportos memóriaként
 - [Spartan 3E](https://www.xilinx.com/support/documentation/data_sheets/ds312.pdf) -> 1 BRAM = 18 Kbit
 - biztosítja az adatfolyamot a DSP/szorzó áramköröknek
+
 ### DCM 
-- **DCM:** különböző órajelek szétosztása, szintézise
+- különböző órajelek szétosztása, szintézise
+- órajelek stabilizálása, szinkronizálása
 
 ### CLB
+- elemei: LUT kereső táblázat, Bistabil áramkör, logikai kapuk, multiplexer áramkörök
 - egy CLB 4 szeletet tartalmaz
 - bal oldali szelet (SLICE M): memória elemeket is tartalmaz => osztott memória, a kerresőtáblázat használható 16 bites shiftregiszternek
 - jobb oldali szelet (SLICE R):
