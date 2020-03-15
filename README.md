@@ -1,7 +1,7 @@
 # Tartalom
 - [Téma 1 - bevezetés, FPGA alapok](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#téma-1---bevezetés-fpga-alapok)
 - [Téma 2 - FPGA áramkörök szerkezete](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#téma-2---fpga-áramkörök-szerkezete)
-  - [Vivado projekzt]()
+  - [Vivado projekt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#vivado-projekt)
 
 ---------
 
@@ -177,8 +177,10 @@ külső órajel bemenetek/half clock bemeneteken külső órajele megadása
 > ````
 >
 > **architektura rész**
-> `architecture Behavioral of [NÉV] is `
-> - deklarációs rész
-> `begin`
-> - implementációs rész
-> `end Behavioral;`
+> ````VHDL
+> architecture Behavioral of [NÉV] is `
+> -- deklarációs rész
+> begin
+> -- implementációs rész
+> end Behavioral;
+> ````
