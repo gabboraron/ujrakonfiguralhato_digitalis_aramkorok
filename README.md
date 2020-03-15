@@ -149,6 +149,9 @@ DCM: Digitális órajel menedzser
 - órajel bemenetek
 - órajel buffer az órajelek szétosztására az órajelek között, mert különböző órajelekre van szükség => órajelek szétosztása, késleltetése
 külső órajel bemenetek/half clock bemeneteken külső órajele megadása
+- BUFG
+- BUFGMUX
+- BUFGCE
 
 ## FPGA konfigurálása
 **Bit file**: konfigurációs fájl
