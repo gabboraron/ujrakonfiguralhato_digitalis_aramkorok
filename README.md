@@ -2,6 +2,7 @@
 - [Téma 1 - bevezetés, FPGA alapok](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#téma-1---bevezetés-fpga-alapok)
 - [Téma 2 - FPGA áramkörök szerkezete](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#téma-2---fpga-áramkörök-szerkezete)
   - [Vivado projekt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#vivado-projekt)
+- [Téma 3 - Áramköri leírási modellek és hierarchikus alrendszerek]()
 
 ---------
 
@@ -70,6 +71,8 @@ RAM alapú FPGAba a bekapcsolás után be kell konfigurálni a **bitfolyamot** a
 -----
 
 # Téma 2 - FPGA áramkörök szerkezete
+> Ebben a részben a hallgató megismerheti az FPGA áramkörök szerkezetét, a fontosabb részeit, valamint egy FPGA áramkörben megtalálható vezetékhálózatokat. A téma keretében szemléltetjük a feladatnak az FPGA áramkörbe való programozásának lehetséges változatait.  
+
 ## AZ FPGA elemei:
 - konfigurálható logikai tömbök (CLB)
   - LUT kereső táblázat (look up tables)
@@ -90,6 +93,11 @@ RAM alapú FPGAba a bekapcsolás után be kell konfigurálni a **bitfolyamot** a
 - alkalmazható kétportos memóriaként
 - [Spartan 3E](https://www.xilinx.com/support/documentation/data_sheets/ds312.pdf) -> 1 BRAM = 18 Kbit
 - biztosítja az adatfolyamot a DSP/szorzó áramköröknek
+
+### LUT táblázat
+- Logikai függvény megvalóstása
+- Osztott memória
+- Léptető regiszter
 
 ### DCM 
 - különböző órajelek szétosztása, szintézise
@@ -186,9 +194,83 @@ külső órajel bemenetek/half clock bemeneteken külső órajele megadása
 >
 > **architektura rész**
 > ````VHDL
-> architecture Behavioral of [NÉV] is `
+> architecture Behavioral of [NÉV] is 
 > -- deklarációs rész
 > begin
 > -- implementációs rész
 > end Behavioral;
 > ````
+
+# Téma 3 - Áramköri leírási modellek és hierarchikus alrendszerek
+> A fejezetben a hallgató megismerheti az FPGA alapú áramkör tervezésnél alkalmazott áramköri modelleket és absztrakciós rétegeket.  Egy áramkört tekinthetünk fekete doboznak, amelynek nem ismerjük a belső felépítését, szerkezetét, de ismerjük a viselkedését. Ismerjük a bemenetek és kimenetek közötti összefüggést.  Egy másik megközelítés, hogy ismerjük a részletes felépítését, modulárisan milyen alegységeket, modulokat, komponenseket tartalmaz és a komponensek közötti kapcsolatokat. Egy áramkörnek a tervezés során meghatározhatjuk a viselkedését vagy  felépíthetjük az áramköri elemekből, amely ugyanazt a viselkedést eredményezi.
+> 
+> Egy elektronikus hardver különböző absztrakciós szinten írható le.  A tervezendő hardver rendszer specifikációja során, általában, egy magasabb hierarchikus szintről lépegetve alacsonyabb hierarchikus szintekre, eljutunk az áramkör hardver szintű megvalósításáig.
+> 
+> Ismerve a hierarchikus szinteket és megértve az áramkör leírási modellek (strukturális, viselkedési) közötti összefüggéseket, a hallgató átlátja a különböző specifikációs modellekből kiindulva a hardver kialakítását.
+
+## Viselkedési modell
+- leírja a rendszer vagy részrendszer viselkedését
+- úgy tekint a rendszerre akár egy fekete dobozra
+- bemeneti és kimeneti adatok összefüggéseire koncentrál
+> => bemeneti portok => vezetékek => modil komponensei => kimeneti portok
+
+## EDA - [Electronic Design Configuration](https://en.wikipedia.org/wiki/Electronic_design_automation)
+- nem kell mindne szintet pontosan definiálni
+- elegendő a tervezést a legfelsőbb siznteken elvégezni
+- => EDIF (Ectronic Design Interchange Format) - semleges adatcsere formátum => automatizált elektronikus tervezés
+- EDAXML
+- NGC (native GEneric Circuit) - Xilninx saját formátum
+
+## Netlist
+felsorolja a komponeneseket
+
+## Fizikai nézet
+- hardver erőforrásokat ábrázol
+- újabb fizikai információkkal bővíti a  strukturális nézetet: alkatrészek mérete, helye, összekötő vonalak
+
+## Multiplexer áramkör
+LUT3 - Q_F
+```VHDL
+O = ((I0 * I2) + (!I0 * I1));
+```
+LUT3 - Q_G
+```VHDL
+O = ((I0 * I2) + (!I0 * I1));
+```
+4 bemenetes multiplexer áramkör megvalósításához:
+- két keresőtáblázat
+- egy két bemenetes multiplexer áramkör -> függvényben kijelöli, hogy melyik LUT eredményét alklamazza
+a LUT elemekben szintén 2 bementes multiplexer áramkör, keresőtáblázatokban a multiplexert leíró Boole függvény.
+> => bemeneti buffferek => adat bementek/kiválasztó bemenetek => kimenetei bufferek
+
+## Digitális rendszerek absztrakciós szintjei
+### Absztrakciós szintek
+#### Tranzisztor
+- alap elemek: tranzisztor, ellenállás, kondnezátor, tekercs
+- viselkedése differenciál egyenletekkel van leírva
+- digitális áramkör = analóg áramkör
+- a jel időben változó
+- a gyártó feladata
+#### Kapu
+- logiaki kapukból áll
+- a jelek **1** vagy **0**-k
+- bemeneti-kimeneti kapcsolatokat Boole egyenletekkel írjuk le
+- időzítéssel kapcsolatos információk egyszerűsítve: `propagation delay`
+fizikai nézetben: a kapuk elhelyezése, a kapukat összekötő vonalak huzalozása
+#### Regiszter
+- kapukból épített modulok
+- összeadók, komperátorok, tárak, regiszterek, multiplexerek
+- jelek speciális adatként: unsigned integer, float, stb..
+- véges állapotú automata írja le
+- strukturális nézet: kettes komplemensű bitsorozat
+- jelek továbbítására alkalmazott sínrendszer
+#### Processzor
+- processzorok, memória, sínrendszer
+- leírás: a program sázmolási lépéseivel, folyamatokkal
+- IP alaprajz feleltethető meg neki a fizikai tarotmányban
+alaprajz: logiaki cellák + makrocellák és összeköttetéseik
+
+
+### Y diagram
+- absztrakciós szintek és nézetek két külön dimenzió
+- minden szint saját nézete
