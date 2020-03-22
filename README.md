@@ -271,13 +271,15 @@ fizikai nézetben: a kapuk elhelyezése, a kapukat összekötő vonalak huzaloz�
 alaprajz: logiaki cellák + makrocellák és összeköttetéseik
 
 
-### Y diagram
+### Y diagram (modul floorplan, alaprajz)
 - absztrakciós szintek és nézetek két külön dimenzió
 - minden szint saját nézete
+![modulfloorplan, azaz alaprajz](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/modul_floorplan.PNG)
 
 # Téma 4 - FPGA alapú tervezés lépései
 > fájl: [4. ppt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/T4_KMOOC_UKDA_2017_v4.pptx)
 >
+> ![FPGA rendszertervezés](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/digitalis_rendszer_tervezese.PNG)
 > ![FPGA fájl generálás lépései összefoglalva](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/fpga_fajl%20gen.PNG)
 >
 > Ebben a részben a hallgató megismerheti az FPGA alapú tervezés lépéseit, tervezési módszereket és a tervezés különböző fázisaiban alkalmazható ellenőrzési módszereket.
