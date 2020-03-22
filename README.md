@@ -5,7 +5,7 @@
 - [Téma 3 - Áramköri leírási modellek és hierarchikus alrendszerek](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-3---%C3%A1ramk%C3%B6ri-le%C3%ADr%C3%A1si-modellek-%C3%A9s-hierarchikus-alrendszerek)
   - [Multiplexer áramkör](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#multiplexer-%C3%A1ramk%C3%B6r)
   - [Digitális rendszerek absztrakciós szintjei (tranzisztor, kapu, regiszter, processzor)](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#digit%C3%A1lis-rendszerek-absztrakci%C3%B3s-szintjei)
-- Téma 4 - [FPGA alapú tervezés lépései](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#t%C3%A9ma-4---fpga-alap%C3%BA-tervez%C3%A9s-l%C3%A9p%C3%A9sei) [VHDL programok szerkezete]()
+- Téma 4 - [FPGA alapú tervezés lépései](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#t%C3%A9ma-4---fpga-alap%C3%BA-tervez%C3%A9s-l%C3%A9p%C3%A9sei) és a [VHDL programok szerkezete](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#vhdl-programok-szerkezete)
 
 ---------
 
@@ -408,14 +408,23 @@ fájl: [ppt 5](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramko
 ````VHDL
 {’U’, ’X’, ’0’, ’1’, ’Z’, ’W’, ’L’, ’H’, ’-’} 
 ````
+
 **`U`** - Nem inicializált, a jelhez vagy változóhoz **nincsen értéke rendelve** (Szimulációban alkalmazott)
+
 **`X`** - **Határozatlan logikai állapot**
+
 **`W`** - Gyenge határozatlan logikai állapot, jel, egy olyan értéket vesz fel amit **nem lehet sem logikai 0-nak sem logikai 1-nek értelmezni**. 
+
 **`0`** - **Határozott logikai `0`**, akkor veszi egy jel ezt az értéket, ha szabványos meghajtó áramkör vezérli
+
 **`1`** - **Határozott logikai `1`**, akkor veszi egy jel ezt az értéket, ha szabványos meghajtó áramkör vezérli
+
 **`Z`** - Nagy impedanciás érték, **háromállapotú meghajtó áramkör**
+
 **`L`** - **Gyenge logikai `0`**, a meghajtó vezérlő áramkör ***gyenge meghajtó áramot szolgáltat***
+
 **`H`** - **Gyenge logikai `1`**, a meghajtó vezérlő áramkör ***gyenge meghajtó áramot szolgáltat***
+
 **`-`** - Redundáns érték
 
 ## Lexikális elemek
@@ -440,16 +449,16 @@ fájl: [ppt 5](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramko
 - Lebegőpontos: pl: `Type jelszint is range -10.00 to 10.00;` vagy `Type valoszinuseg is range 0.0 to 1.0;`, előre definiált: `Real` -1E38	tól 1E38–ig
 - Valós
   - *N* alapú:
-  `Based_literal::=base#basedinteger[.basedinteger]#[exponent]`
-  `2#1100_0100#	16#C4#	4#301#E2` = 196
-  `2#1.1111_1111_111#E+11	16#F.FFFE2` = 4095.0
-  - *Bit string*
-  `Bit_string_literal:==base_specifier”bit_value”`
-  `base_speifier::=B|O|X`
-  `bit_value::=extended_digit{[underline]extended_digit}`
-  `B”10101100”` = 8 bit
-  `O”126” = 3 x 3 bit = `B”001_010_110”`
-  `X”56”` = 2 x 4 bit = `B”0101_0110”`
+  	-`Based_literal::=base#basedinteger[.basedinteger]#[exponent]`
+  	- `2#1100_0100#	16#C4#	4#301#E2` = 196
+  	- `2#1.1111_1111_111#E+11	16#F.FFFE2` = 4095.0
+   - *Bit string*
+  	- `Bit_string_literal:==base_specifier”bit_value”`
+  	- `base_speifier::=B|O|X`
+  	- `bit_value::=extended_digit{[underline]extended_digit}`
+  	- `B”10101100”` = 8 bit
+  	- `O”126” = 3 x 3 bit = `B”001_010_110”`
+  	- `X”56”` = 2 x 4 bit = `B”0101_0110”`
   
 **Kulcsszavak**:`abs, access, after, alias, and, architecture, array, assert, attribute, begin, block, body, buffer, bus, case, component, configuration, constant, disconnect, downto, else, elsif, end, entity, exit, file, for, function, generate, generic, guarded, if, impure, in, inertial, inout, is, label, library, linkage, literal, 
 loop, map, mod, nand, new, next, nor, not, null, of, on, open, or, others, package, port, postponed, procedure, process, pure, range, record, register, eject, rem, report, return, rol, ror, select, severity, shared, signals, sra, srl, subtype, then, to, transport, type unaffected, units, until, use, variable, wait, when, while, with, xnor, xor`
@@ -504,6 +513,7 @@ USE work.all;
 
 ## `Entity`
 ![egy netity váza](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/entity.png)
+
 `PORT`: egy listát tartalmaz az összes ki és bemeneti, meghatározva a jel típusát és iránáyát
 ```VHDL
 ENTITY entitás_neve IS
@@ -519,6 +529,7 @@ A jel típusa lehet: `Bit`, `STD_LOGIC`, `INTEGER` stb
 A jel iránya: `In`, `out`, `Inout`, `buffer`
 
 Az `AND` entity:
+
 ![AND](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/and.PNG)
 ````VHDL
 ENTITY es_kapu IS
