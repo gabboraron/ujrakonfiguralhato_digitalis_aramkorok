@@ -2,8 +2,8 @@
 - [Téma 1 - bevezetés, FPGA alapok](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#téma-1---bevezetés-fpga-alapok)
 - [Téma 2 - FPGA áramkörök szerkezete](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#téma-2---fpga-áramkörök-szerkezete)
   - [Vivado projekt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#vivado-projekt)
-- [Téma 3 - Áramköri leírási modellek és hierarchikus alrendszerek]()
-
+- [Téma 3 - Áramköri leírási modellek és hierarchikus alrendszerek](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-3---%C3%A1ramk%C3%B6ri-le%C3%ADr%C3%A1si-modellek-%C3%A9s-hierarchikus-alrendszerek)
+- [Téma 4 - FPGA alapú tervezés lépései]()
 ---------
 
 # Téma 1 - bevezetés, FPGA alapok
@@ -274,3 +274,45 @@ alaprajz: logiaki cellák + makrocellák és összeköttetéseik
 ### Y diagram
 - absztrakciós szintek és nézetek két külön dimenzió
 - minden szint saját nézete
+
+# Téma 4 - FPGA alapú tervezés lépései
+> fájl: [4. ppt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/T4_KMOOC_UKDA_2017_v4.pptx)
+> Ebben a részben a hallgató megismerheti az FPGA alapú tervezés lépéseit, tervezési módszereket és a tervezés különböző fázisaiban alkalmazható ellenőrzési módszereket.
+>
+> A hallgató egy átfogó képet kap a tervezés különböző fázisai után alkalmazható tesztelési módszerekről. A téma elsajátítását követően a hallgató  képes lesz a tervezőeszközben alkalmazni az ellenőrzés különböző szintjeit.
+
+## Szintézis
+- **Magas szintű**
+  - átalakítja a regiszter műveletekre (regiszter szintű leírásra)
+- **Regiszter szintű**
+  - regiszter szintű viselkedési leírás analízise alapján felépíti az áramkört a regiszter szintű elemeket használva
+- **Kapu szintű**
+  - a strukturális megvalósítás kapu szintű elemekre épül
+  - két vagy többszintes optimalizálási eljárás alklamazása az áramkör méretének minimalizálására
+- **Technológiai leképezés**
+  - minden rendszer tartalmaz előre lekészített kapu szerű primitív elemeket amiket egy cella standard célkönyvtárból vagy logikai cella az FPGA rendszeréből
+  - a kapu szint implementálásához egy partikuláris rendszeren az elemeket le kell képezni a kiválasztott célrendszerre **=> ez a technológiai leképezés** 
+
+## Fizikai tervezés
+- finomítási folyamat
+- **Particionálás**
+- **Alaprajzi tervezés**
+  - létrehoz egy tevet processzor és regiszter szinten
+- **Elehelyezés és huzalozás**
+  - terv cella szinten, az áramkör primitív elemeiből és elvégzi a huzalozást
+- **circuit parameter extraction**
+  - az elhelyezés és routolás után mind kapcsolat helye és hossza ismert
+  - az asszociált parazita kapacitás és ellenállás kiszámítható
+
+## Ellenőrzés
+- funkcionális: a rendszer az elvárt kimenetet szolgáltatja?
+- időzítés: teljesíti az időbeli korlátokat?
+- teljesítmény: betartja a részegységek meghatározott áramkorlátokat?
+
+## Ellenőrzési módok
+- szimuláció
+- időanalízis
+- teljesítmény analízis
+- hardver emuláció
+  - prototípus áramkör FPGA-n
+  - beépített analizátor
