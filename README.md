@@ -3,7 +3,7 @@
 - [Téma 2 - FPGA áramkörök szerkezete](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#téma-2---fpga-áramkörök-szerkezete)
   - [Vivado projekt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#vivado-projekt)
 - [Téma 3 - Áramköri leírási modellek és hierarchikus alrendszerek](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-3---%C3%A1ramk%C3%B6ri-le%C3%ADr%C3%A1si-modellek-%C3%A9s-hierarchikus-alrendszerek)
-- [Téma 4 - FPGA alapú tervezés lépései]()
+- [Téma 4 - FPGA alapú tervezés lépései](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#t%C3%A9ma-4---fpga-alap%C3%BA-tervez%C3%A9s-l%C3%A9p%C3%A9sei)
 ---------
 
 # Téma 1 - bevezetés, FPGA alapok
@@ -212,7 +212,7 @@ külső órajel bemenetek/half clock bemeneteken külső órajele megadása
 - leírja a rendszer vagy részrendszer viselkedését
 - úgy tekint a rendszerre akár egy fekete dobozra
 - bemeneti és kimeneti adatok összefüggéseire koncentrál
-> => bemeneti portok => vezetékek => modil komponensei => kimeneti portok
+> => bemeneti portok => vezetékek => modell komponensei => kimeneti portok
 
 ## EDA - [Electronic Design Configuration](https://en.wikipedia.org/wiki/Electronic_design_automation)
 - nem kell mindne szintet pontosan definiálni
@@ -221,10 +221,10 @@ külső órajel bemenetek/half clock bemeneteken külső órajele megadása
 - EDAXML
 - NGC (native GEneric Circuit) - Xilninx saját formátum
 
-## Netlist
+## *Netlist*
 felsorolja a komponeneseket
 
-## Fizikai nézet
+## *Fizikai nézet*
 - hardver erőforrásokat ábrázol
 - újabb fizikai információkkal bővíti a  strukturális nézetet: alkatrészek mérete, helye, összekötő vonalak
 
@@ -277,6 +277,9 @@ alaprajz: logiaki cellák + makrocellák és összeköttetéseik
 
 # Téma 4 - FPGA alapú tervezés lépései
 > fájl: [4. ppt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/T4_KMOOC_UKDA_2017_v4.pptx)
+>
+> ![FPGA fájl generálás lépései összefoglalva](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/fpga_fajl%20gen.PNG)
+>
 > Ebben a részben a hallgató megismerheti az FPGA alapú tervezés lépéseit, tervezési módszereket és a tervezés különböző fázisaiban alkalmazható ellenőrzési módszereket.
 >
 > A hallgató egy átfogó képet kap a tervezés különböző fázisai után alkalmazható tesztelési módszerekről. A téma elsajátítását követően a hallgató  képes lesz a tervezőeszközben alkalmazni az ellenőrzés különböző szintjeit.
@@ -316,3 +319,53 @@ alaprajz: logiaki cellák + makrocellák és összeköttetéseik
 - hardver emuláció
   - prototípus áramkör FPGA-n
   - beépített analizátor
+
+## FPGA alapú tervezés fontosabb lépései:
+### Szintézis
+- Kapu szintű
+- regiszter szintű
+- processzor szintű
+> - Szintézis során a `VHDL` vagy  `Verilog` programkód lefordítódik `netlist` (`NGC - Native Generic Circuit` vagy `EDIF-Standard Electronic Interchnage Format`) formátumra. Szintetzáció során a `HDL` leírás kapu sizntű netlist állománnyá amit az `UNISM`könyvtárra képez le.
+>   - több alegység esetén minden alegységhez tartozik egy ilyen állomány
+>     - szintaxis ellenőrzés
+>     - analizálja a terv hierarchiáját
+
+### Implementáció
+#### Fordítás
+> - több külöböző hardver leíró nyelven készítettállomány egyesítése egyelten `netlist`(`EDIF`) fájlba
+> - kombinálja az `NGC` fájlokat és a megkötéseket `User Constraints File` amiből létrejön egy logikai fájl, az `NGD` - *Native Generic Database* az `NGD Build` segítségével. 
+>   - a `User Constraints File` hozzárendeli a ki/bemeneti portokat az FPGA lábakhoz és meghatározza az időzítési követelményeket
+> **=>** Ha az **`NGC` az `UNISM` könyvtárra alapoz akkor *szintézis* után viselkedési szimuláció**t végez
+>
+> **=>** Ha az **`NGD` az `SIMPRIM` könyvtárra alapoz akkor *fordítás* után időalapú szimuláció**t végez
+
+#### leképezés/mappolás
+> **`NGD` => leképezés => `NCD`**
+>
+> - a logikai elemeket tartalmazó áramköröket alegységekre osztja
+> - az `NGD`ben definiált logikát képzi le az FPGA elemeire: [CLB](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#clb), [IOB](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#iob), [Block RAM](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#bram), DSP, stb ami egy `NCD - Native Circuit Description` állományt generál, amely leírja fizikailag az áramkör elemeit
+> - **ismerjük az FPGAból, hogy milyen elemket használunk, csak nem tudjuk melyiket, ezt oldja meg a MAP**
+
+#### elhelyezés és huzalozás (Place and route)
+>**`NCD` => *elhelyezés és huzalozás* => huzalozott `NCD`**
+>
+> `PAR` program végzi
+> 
+> Az előző fázis eredményeként kapott alegységeket elhelyezi az FPGA blokkba, figyelembe véve a megkötéseket, és összehuzalozza ezeket.
+>
+> A folyamat során figyelmebe veszi és feloldja a kényszerfeltételek közti ellentéteket.
+
+### Konfigurációs fájl létrehozása
+> Az eszköz beprogramozása: `BITGEN` program generál az `NCD` ből `BIT` típusú állományt ami feltölthető az FPGAba egy feltöltő programmal mint az `IMPACT`
+
+### Ellenőrzés
+- Szimuláció
+  - viselkedési
+  - funkcionális
+    - fordítás után
+    - leképezés után
+  - időzítési
+    - elhelyezés és huzalozás utáni
+- verifikáció
+  - logikai analizátor
+  - Hardver co-szimuláció
