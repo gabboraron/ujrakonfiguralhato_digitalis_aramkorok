@@ -3,7 +3,10 @@
 - [Téma 2 - FPGA áramkörök szerkezete](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#téma-2---fpga-áramkörök-szerkezete)
   - [Vivado projekt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#vivado-projekt)
 - [Téma 3 - Áramköri leírási modellek és hierarchikus alrendszerek](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-3---%C3%A1ramk%C3%B6ri-le%C3%ADr%C3%A1si-modellek-%C3%A9s-hierarchikus-alrendszerek)
+  - [Multiplexer áramkör](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#multiplexer-%C3%A1ramk%C3%B6r)
+  - [Digitális rendszerek absztrakciós szintjei (tranzisztor, kapu, regiszter, processzor)](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#digit%C3%A1lis-rendszerek-absztrakci%C3%B3s-szintjei)
 - [Téma 4 - FPGA alapú tervezés lépései](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#t%C3%A9ma-4---fpga-alap%C3%BA-tervez%C3%A9s-l%C3%A9p%C3%A9sei)
+
 ---------
 
 # Téma 1 - bevezetés, FPGA alapok
@@ -183,8 +186,9 @@ külső órajel bemenetek/half clock bemeneteken külső órajele megadása
 - `TCK` órajel
 
 ## Vivado projekt 
-### VHDL alapok
+### VHDL fájl felépítése:
 > **megjegyzés** `--`
+>
 > **entitások** 
 > ````VHDL
 > entity [NÉV] is 
@@ -200,6 +204,8 @@ külső órajel bemenetek/half clock bemeneteken külső órajele megadása
 > -- implementációs rész
 > end Behavioral;
 > ````
+
+----
 
 # Téma 3 - Áramköri leírási modellek és hierarchikus alrendszerek
 > A fejezetben a hallgató megismerheti az FPGA alapú áramkör tervezésnél alkalmazott áramköri modelleket és absztrakciós rétegeket.  Egy áramkört tekinthetünk fekete doboznak, amelynek nem ismerjük a belső felépítését, szerkezetét, de ismerjük a viselkedését. Ismerjük a bemenetek és kimenetek közötti összefüggést.  Egy másik megközelítés, hogy ismerjük a részletes felépítését, modulárisan milyen alegységeket, modulokat, komponenseket tartalmaz és a komponensek közötti kapcsolatokat. Egy áramkörnek a tervezés során meghatározhatjuk a viselkedését vagy  felépíthetjük az áramköri elemekből, amely ugyanazt a viselkedést eredményezi.
@@ -276,10 +282,13 @@ alaprajz: logiaki cellák + makrocellák és összeköttetéseik
 - minden szint saját nézete
 ![modulfloorplan, azaz alaprajz](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/modul_floorplan.PNG)
 
+----
+
 # Téma 4 - FPGA alapú tervezés lépései
 > fájl: [4. ppt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/T4_KMOOC_UKDA_2017_v4.pptx)
 >
 > ![FPGA rendszertervezés](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/digitalis_rendszer_tervezese.PNG)
+>
 > ![FPGA fájl generálás lépései összefoglalva](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/fpga_fajl%20gen.PNG)
 >
 > Ebben a részben a hallgató megismerheti az FPGA alapú tervezés lépéseit, tervezési módszereket és a tervezés különböző fázisaiban alkalmazható ellenőrzési módszereket.
@@ -310,11 +319,11 @@ alaprajz: logiaki cellák + makrocellák és összeköttetéseik
   - az asszociált parazita kapacitás és ellenállás kiszámítható
 
 ## Ellenőrzés
-- funkcionális: a rendszer az elvárt kimenetet szolgáltatja?
-- időzítés: teljesíti az időbeli korlátokat?
-- teljesítmény: betartja a részegységek meghatározott áramkorlátokat?
+- **funkcionális: a rendszer az elvárt kimenetet szolgáltatja?**
+- **időzítés: teljesíti az időbeli korlátokat?**
+- **teljesítmény: betartja a részegységek meghatározott áramkorlátokat?**
 
-## Ellenőrzési módok
+### Ellenőrzési módok:
 - szimuláció
 - időanalízis
 - teljesítmény analízis
