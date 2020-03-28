@@ -6,7 +6,7 @@
   - [Multiplexer áramkör](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#multiplexer-%C3%A1ramk%C3%B6r)
   - [Digitális rendszerek absztrakciós szintjei (tranzisztor, kapu, regiszter, processzor)](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#digit%C3%A1lis-rendszerek-absztrakci%C3%B3s-szintjei)
 - Téma 4 - [FPGA alapú tervezés lépései](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#t%C3%A9ma-4---fpga-alap%C3%BA-tervez%C3%A9s-l%C3%A9p%C3%A9sei) és a [VHDL programok szerkezete](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#vhdl-programok-szerkezete)
-
+- [Téma 5 - VHDL szekvenciális kifejezések]()
 ---------
 
 # Téma 1 - bevezetés, FPGA alapok
@@ -680,4 +680,13 @@ y:="0000";
 w<="10000000"
 w<=(0=>'1', others=>'0')
 ````
+
+# Téma 5 - VHDL szekvenciális kifejezések
+fájl: [5.ppt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/commit/ef9ffb8d1e283bb76510a6ceeec8e29bcec77007)
+> Ebben a részben a hallgató megismerheti a VHDL-ben alkalmazható fontosabb szekvenciális kifejezéseket: process, feltételes értékadás, ciklusok, signal (jel) és variable (változó) közötti különbség.
+>
+> Egyszerű szekvenciális és kombinációs áramkörökre bemutatott példák alapján felismerheti az egyes kódolási módszerek sajátosságait.
+> 
+> A hallgató képes lesz az ismeretek elsajátítását követően kombinációs és szekvenciális áramkörök modellezésére.
+
 
