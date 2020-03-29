@@ -737,9 +737,7 @@ fájl: [5.ppt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramko
 	[VARIABLE változó_neve típus [intervallum] [:=kezdeti_érték]]
 	[alprogram deklarálás]
 BEGIN
-```
-`	-- implementációs rész` *-meghatározzák mely `signal` értékadása fog végrehajtódni.*
-```VHDL	
+	-- implementációs rész --meghatározzák mely signal értékadása fog végrehajtódni.
 	……..
 	szekvenciális kifejezések
 	-- IF, WAIT, CASE, LOOP
@@ -776,7 +774,9 @@ END PROCESS [címke];
 - a `signal` értékadása csak a `PROCESS` kiértékelésének végén történik
 
 **Kombinációs áramkört megvalósító process**
+
 ![Kombinációs áramkört megvalósító process rajza](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/kombinacios_aramkor_process.PNG)
+
 ```VHDL
 entity log_lut is
     Port (-- S0 : in STD_LOGIC;
@@ -799,7 +799,9 @@ end Behavioral;
 ```
 
 **Szekvenciális áramkört megvalósító process**
+
 ![Szekvenciális áramkört megvalósító process rajza](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/szekvencialis_aramkor_processe.PNG)
+
 ```VHDL
 process (src_clk, reset)
 variable counter : std_logic_vector(BIT_SZAM-1 downto 0);
@@ -815,7 +817,9 @@ end Behavioral;
 ```
 
 **Reset nélküli D tároló**
+
 ![Reset nélküli D tároló váza](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/reset_nelkuli_D_tarolo.png)
+
 ```VHDL
 process (src_clk)
 begin
@@ -827,7 +831,9 @@ end Behavioral;
 ```
 
 **D tároló Reset jellel**
+
 ![Resettel D tároló váza](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/D_tarolo_resettel.png)
+
 ```VHDL
 process (src_clk, reset)
 begin
@@ -845,7 +851,9 @@ end Behavioral;
 ```
 
 **példa:**
+
 ![pldaáramkör](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/process_pl.png)
+
 ```VHDL
 LIBRARY ieee;
 USE ieee.std_logic_1164.all;
@@ -931,7 +939,9 @@ END COUNTER
 
 #### `CASE`
 - **Csak szekvenciális kódgenerálásra alkalmazzuk!**
+
 ![case](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/case.png)
+
 ```VHDL
 [ cimke: ] case kifejezés is 
 	when K1 => szekvenciális kifejezések;
@@ -994,6 +1004,7 @@ END PROCESS;
 ```
 
 ![példa](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/wait_until.png)
+
 ```VHDL
 entity pelda_8d is
 GENERIC (BIT_SZAM : natural :=8);
@@ -1034,6 +1045,7 @@ END PROCESS
 ```
 
 ***`CASE` és `WAIT ON` plda:***
+
 ![case & wait on](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/case%26wait_on_p%C3%A9lda.png)
 ```VHDL
 entity pelda_8 is
@@ -1172,6 +1184,7 @@ END LOOP
 - `nexit cimke when C=D or done;` -- done – boole változó
 
 #### Véges állapotú automata
+
 ![vvéges automata](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/vegess_allap%C5%91otu_automata.png)
 ````VHDL
 process (AKT_ALL_reg,start,cont)
