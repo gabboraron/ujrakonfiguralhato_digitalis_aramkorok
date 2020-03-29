@@ -6,7 +6,7 @@
   - [Multiplexer áramkör](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#multiplexer-%C3%A1ramk%C3%B6r)
   - [Digitális rendszerek absztrakciós szintjei (tranzisztor, kapu, regiszter, processzor)](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#digit%C3%A1lis-rendszerek-absztrakci%C3%B3s-szintjei)
 - Téma 4 - [FPGA alapú tervezés lépései](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#t%C3%A9ma-4---fpga-alap%C3%BA-tervez%C3%A9s-l%C3%A9p%C3%A9sei) és a [VHDL programok szerkezete](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#vhdl-programok-szerkezete)
-- [Téma 5 - VHDL szekvenciális kifejezések]()
+- [Téma 5 - VHDL szekvenciális kifejezések](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-5---vhdl-szekvenci%C3%A1lis-kifejez%C3%A9sek)
 ---------
 
 # Téma 1 - bevezetés, FPGA alapok
@@ -689,4 +689,524 @@ fájl: [5.ppt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramko
 > 
 > A hallgató képes lesz az ismeretek elsajátítását követően kombinációs és szekvenciális áramkörök modellezésére.
 
+## Konkurens rész 
+> - **a konkurens rész az `architecture` által van képviselve** amely, tartalmaz:
+>	- **`process`**-t
+>	- **konkurens eljárás hívás**t (`procedure`)
+>	- **konkurens jelhozzárendelés** 
+>	- **komponens példányosítás**t  
 
+## Szekvenciális rész
+> - **`process`** (folyamatban) **vagy alprogramrészben** található szekvenciális kifejezések
+> - a szekvenciális kifejezések **abban a sorrendben vannak végrehajtva, ahogy megjelennek a process vagy alprogram részekben**
+
+> `VHDL PROCESS` – legegyszerűbb megoldás szekvenciális áramkörök tervezésére 
+> - Szekvenciális kifejezés
+> - Minden `PROCESS` egyetlen kifejezés
+> - **Az `architecture`-ben minden processzus egyszerre (konkurensen) hajtódik végre**
+> 
+> A `PROCESS` a terv többi részével a `PROCESS`-en kívül deklarált `SIGNAL`-okon és `PORT`-okon kommunikál
+
+**szekvenciálisan végrehajtódó utasítások:** **`PROCESS`**, `FUNCTION`, `PROCEDURES`, `IF`, `WAIT`, `CASE` `LOOP`, `VARIABLE` - szintén csak szekvenciális kódgenerálásban vagy lokálisan, `SIGNAL` –globálisan alkalmazható, bővebben: [vhdl-online.de/vhdl_reference_93](https://www.vhdl-online.de/vhdl_reference_93/start)
+
+### Szekvenciális kifejezések csak `PROCESS`–en belül alkalmazhatóak:
+> **értékadás** (hozzárendelés, assignment): **változóknak**, **jeleknek**
+> 
+> **folyamatirányító kifejezések** (utasítások): 
+> - *feltételes*: `IF`, `CASE`, `LOOP`
+> - *ciklus*: `FOR...LOOP`, `WHILE LOOP`, `UNTIL`
+> - *ugrás*: `NEXT`, `EXIT`
+>
+> **alprogramrészek**: `FUNCTION`, `PROCEDURES` 
+>
+> **várakozás**, amíg egy esemény történik: `WAIT`
+>
+> **semmi** sem történik: `NULL`
+
+#### `PROCESS`
+> - egy szekvenciális algoritmust implementál
+> - Tartalmazhat szekvenciális és konkurens kifejezéseket
+> - Szekvenciális kifejezések csak a `PROCESS` -en belül alkalmazhatók
+
+**szerkezete:**
+```VHDL
+[címke]:PROCESS (érzékenységi lista)
+	[típus deklarálás]
+	[konstans deklarálás]
+	[változó deklarálás]
+	[VARIABLE változó_neve típus [intervallum] [:=kezdeti_érték]]
+	[alprogram deklarálás]
+BEGIN
+```
+`	-- implementációs rész` *-meghatározzák mely `signal` értékadása fog végrehajtódni.*
+```VHDL	
+	……..
+	szekvenciális kifejezések
+	-- IF, WAIT, CASE, LOOP
+	……..
+END PROCESS [címke];
+```
+**A `PROCESS` aktiválódik, ha**
+- a `PROCESS`-t követő listából (érzékenységi lista) a jelek értéket váltanak
+- a `WAIT` kifejezésből  a jelek értéket váltanak
+
+**`PROCESS` – (explicit) érzékenységi listával**
+- aktiválódnak amikor az élesítő listából bármely jel állapotot vált
+- nem tartalmazhat `WAIT`-et
+- végén van egy implicit `WAIT ON` 
+- kiértékelése a végén függesztődik fel
+
+**`PROCESS` élesítő lista nélkül**
+- tartalmaznia kell legalább egy **`WAIT`**-et
+	- Egyes tervező eszközök esetében a `WAIT` kifejezés rögtön a `BEGIN` után kell következzen
+	- A `PROCESS` az első `WAIT`–ig fut
+- A `WAIT` kifejezés meghatározza a `signal`–okat, amelyek változását monitorizáljuk
+- A `PROCESS`–ek akkor aktiválódnak, amikor a `WAIT` kifejezés után meghatározott `signal`-ok értéket váltanak
+- A `PROCESS` a következő `WAIT` kifejezésig fut
+- *Egyes tervezőeszközök `PROCESS`–enként több `WAIT` kifejezést engedélyeznek*
+
+**`PROCESS` kiértékelése:**
+- A **már egyszer aktiválódott** `process` kiértékelése a **legutolsó felfüggesztéstől kezdődik**
+- fentről lefele hajtódik végre
+- Ha a  process végéig nincs (még) egy `WAIT` (újabb `WAIT`), a kiértékelés visszaugrik a `PROCESS` elejére és folytatódik (a `WAIT`-ig)
+
+**A hivatkozott jelek állapota a jelek (`signal`ok) állapota a `PROCESS` inditásakor:**
+- Az összes `signal` értékadás csak lehetséges értékadás
+- A `PROCESS`-en belül  a `signal`-ra az utolsó értékadás érvényesül
+- a `signal` értékadása csak a `PROCESS` kiértékelésének végén történik
+
+**Kombinációs áramkört megvalósító process**
+![Kombinációs áramkört megvalósító process rajza](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/kombinacios_aramkor_process.PNG)
+```VHDL
+entity log_lut is
+    Port (-- S0 : in STD_LOGIC;
+           --S1 : in STD_LOGIC;
+           I0 : in STD_LOGIC;
+           I1 : in STD_LOGIC;
+           I2 : in STD_LOGIC;
+           I3 : in STD_LOGIC;
+           q : out STD_LOGIC);
+end log_lut;
+
+architecture Behavioral of log_lut is
+begin
+	
+process (I0, I1, I2, I3)
+begin
+q<=((I0 and I1) or (not I2)) and I3;
+end process;
+end Behavioral;
+```
+
+**Szekvenciális áramkört megvalósító process**
+![Szekvenciális áramkört megvalósító process rajza](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/szekvencialis_aramkor_processe.PNG)
+```VHDL
+process (src_clk, reset)
+variable counter : std_logic_vector(BIT_SZAM-1 downto 0);
+begin
+   if reset='1' then 
+     counter := (others=>'0');
+   elsif src_clk'event and src_clk='1' and CE='1' then
+     counter := counter+1;
+  end if;
+        q<=counter;
+end process;
+end Behavioral;
+```
+
+**Reset nélküli D tároló**
+![Reset nélküli D tároló váza](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/reset_nelkuli_D_tarolo.png)
+```VHDL
+process (src_clk)
+begin
+   if src_clk'event and src_clk='0' then --Felfutó él detektálás
+      q <= d;
+   end if;
+end process;
+end Behavioral;
+```
+
+**D tároló Reset jellel**
+![Resettel D tároló váza](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/D_tarolo_resettel.png)
+```VHDL
+process (src_clk, reset)
+begin
+   if src_clk'event and src_clk='0' then --Felfutó él detektálás
+   --Szinkron reset
+   if reset='1' then
+      q <= '0';
+    else
+    -- Szinkron reset kezelés vége
+     q<=d;      
+   end if;
+   end if;
+end process;
+end Behavioral;
+```
+
+**példa:**
+![pldaáramkör](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/process_pl.png)
+```VHDL
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+-------------------------------------------
+entity pelda_2 is
+    Port (src_clk: in std_logic;
+          reset : in std_logic;
+          d : in std_logic;
+          q : out std_logic);
+end pelda_2;
+--------------------------------------------
+architecture Behavioral of pelda_2 is
+
+begin
+process (src_clk, reset)
+begin
+     -- Szinkron reset	
+    if reset='1' then
+   elsif src_clk'event and src_clk='0' then
+   -- Szinkron reset eddig
+      q <= d;
+   end if;
+end process;
+end Behavioral;
+```
+
+#### `SIGNAL`OK
+- vezeték szerepe komponensek között összekapcsolásra
+- deklarálható: 
+	- `PACKAGE`-ben
+	- `ENTITY`-ben (`port` típusú szignál)
+	- `ARCHITECTURE`-ban
+- módosítása csak `PROCESS`  végén történik
+- **`SIGNAL` értékadás: `jel<=kifejezes`**
+
+#### `VARIABLE` - változók
+- csak `PROCESS`-en belül deklarálható, és tartalma `PROCESS`-en kívül nem érhető el 
+- Alkalmazható  köztes eredmények tárolására.
+- módosítása azonnali
+- **Változó értékadás: `valtozo_neve:=kifejezes`**
+
+#### `IF` –feltételes végrehajtás
+```VHDL
+IF feltétel THEN
+	értékadás ha a feltétel igaz
+ELSE 
+	értékadás ha a feltétel hamis
+END IF;
+```
+
+```VHDL
+IF (x<y) THEN temp:=“11111111”;
+ELSIF (x=y and w=‘0’) THEN temp:=“11110000”;
+ELSE temp:=(OTHERS=>’0’);
+END IF;
+```
+
+**Számláló megvalósítása példa:**
+```VHDL
+LIBRARY ieee;
+USE ieee.std_logic_vector;
+----------------------------------------------
+ENTITY counter IS
+	PORT (clk: IN STD_LOGIC;
+		 digit: OUT INTEGER RANGE 0 TO 9); --Változó deklarálás
+END counter
+----------------------------------------------
+ARCHITECTURE counter OF counter IS
+BEGIN
+	count:PROCESS(clk)
+		VARIABLE temp : INTEGER RANGE 0 TO 10; --Változó deklarálás
+BEGIN
+	IF (clk’EVENT AND clk=‘1’) THEN	--Felfutó él detektálás 
+		temp:=temp+1;
+		IF (temp=10) THEN --Változó visszaállítása nullára
+			 temp:=0;
+		END IF; --
+	END IF
+	digit <=temp;
+END PROCESS count;
+END COUNTER
+```
+
+#### `CASE`
+- **Csak szekvenciális kódgenerálásra alkalmazzuk!**
+![case](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/case.png)
+```VHDL
+[ cimke: ] case kifejezés is 
+	when K1 => szekvenciális kifejezések;
+	 when K2 => szekvenciális kifejezések; 
+	when others => szekvenciális kifejezések; 
+ end case [ cimke ] ; 
+```
+
+```VHDL
+
+process (sel)
+variable counter : std_logic_vector(BIT_SZAM-1 downto 0);
+begin
+   case (sel) is
+   when "000" =>
+      q<=a;
+   when "001" =>
+         q<=b;
+   when "010" =>
+        q<=c;
+   when "011" =>
+         q<=d;
+   when "100" =>
+         q<=e;
+   when "101" =>
+         q<=f;
+   when "110" =>
+         q<=g;
+   when "111" =>
+         q<=h;
+   when others =>
+         q<='X';
+end case;
+end process;
+ end Behavioral;
+```
+
+#### `WAIT`
+Ha a `PROCESS`-en belül alkalmazzuk a `WAIT` parancsot, a `PROCESS`-nek nem lehet érzékenységi paramétere
+- A program  végrehajtódik a következő `WAIT`–ig 
+- A program végrehajtása felfüggesztődik, amíg a `WAIT feltétele` teljesül
+
+**A WAIT parancs formái:**
+`WAIT UNTIL signal_condition;`
+`WAIT ON signal1 [, signal2,…] ;`
+`WAIT FOR time;`
+
+##### `WAIT UNTIL`
+- a `PROCESS`-nek nincs érzékenységi listája, a `WAIT UNTIL` parancs kell az első kifejezés legyen a `PROCESS` folyamaton belül
+- **a `PROCESS` minden alkalommal végrehajtódik, mikor a feltétel teljesül**
+```VHDL
+PROCESS  --nincs erzékenyégi lista!!!!!!!
+	WAIT UNTIL (clk’EVENT AND clk=‘1’);
+	IF (rst=‘1’) THEN
+		output <=“00000000”;
+ELSIF (clk’EVENT AND clk=‘1’) THEN
+		output <=input;
+END IF;
+END PROCESS;
+```
+
+![példa](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/wait_until.png)
+```VHDL
+entity pelda_8d is
+GENERIC (BIT_SZAM : natural :=8);
+  Port ( src_clk : in std_logic;
+          reset : in std_logic;
+         d : in std_logic_vector(BIT_SZAM-1 downto 0);
+         q : out std_logic_vector(BIT_SZAM-1 downto 0)
+  );
+end pelda_8d;
+
+architecture Behavioral of pelda_8d is
+
+begin
+
+PROCESS  --nincs erzékenyégi lista!!!!!!!
+begin
+	WAIT UNTIL src_clk'EVENT AND src_clk='1';
+	IF (reset='1') THEN
+		q <=(others=>'1');
+	ELSE
+		    q <=d;
+	END IF;
+END PROCESS;
+end Behavioral;
+```
+##### `WAIT ON`
+**Várakozik mindaddig amíg valamelyik jel változik**
+```VHDL
+PROCESS
+BEGIN
+		WAIT ON clk, rst
+		IF (rst=‘1’) THEN
+			output <=“00000000”;
+		ELSIF (clk’EVENT AND clk=‘1’) THEN
+			output <=input;
+		END IF;
+END PROCESS
+```
+
+***`CASE` és `WAIT ON` plda:***
+![case & wait on](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/case%26wait_on_p%C3%A9lda.png)
+```VHDL
+entity pelda_8 is
+GENERIC (BIT_SZAM : natural :=8);
+  Port ( src_clk : in std_logic;
+        reset : in std_logic;
+         d : in std_logic_vector(BIT_SZAM-1 downto 0);
+         q : out std_logic_vector(BIT_SZAM-1 downto 0)
+  );
+end pelda_8;
+ 
+architecture Behavioral of pelda_8 is
+ begin
+PROCESS
+BEGIN
+	WAIT ON src_clk, reset;
+	IF (reset='1') THEN
+		q <="00000000";
+	ELSIF (src_clk'EVENT AND src_clk='1') THEN
+		q <=d;
+	END IF;
+END PROCESS;
+```
+
+```VHDL
+entity pelda_8c is
+GENERIC (BIT_SZAM : natural :=8);
+  Port ( src_clk : in std_logic;
+        reset : in std_logic;
+         d : in std_logic_vector(BIT_SZAM-1 downto 0);
+         q : out std_logic_vector(BIT_SZAM-1 downto 0)
+  );
+end pelda_8c;
+ 
+architecture Behavioral of pelda_8c is
+ begin
+PROCESS
+BEGIN
+WAIT ON src_clk, reset;
+CASE reset IS
+	WHEN '1' =>  q<=(others=>'0');
+	WHEN '0' => IF (src_clk'EVENT AND src_clk='1') THEN
+			q<=d;
+		        END IF;
+WHEN OTHERS => NULL;
+END CASE;
+END PROCESS;
+END Behavioral;
+```
+
+##### `WAIT FOR`
+- csak szimulációra alkalmazzuk
+- `WAIT FOR idő;` - Várakozik hogy elteljen a WAIT FOR után meghatározott idő
+***Órajel generálása szimulációhoz***
+```VHDL
+<clock>_process :process
+   begin
+	<clock> <= '0';
+	wait for <clock>_period/2;
+	<clock> <= '1';
+	wait for <clock>_period/2;
+     end process;
+```
+***A bemeneti jelek megadása az idő függvényében.***
+```VHDL
+   stim_proc: process
+   begin		
+      -- hold reset state for 100 ns.
+           reset=‘1’;	
+      wait for 100 ns;	
+	reset=‘0;’
+      wait for <clock>_period;
+	start=‘1’;
+     -- egyéb bemenetek 
+      wait;
+     end process;
+```
+
+#### `LOOP`
+- `FOR / LOOP` – véges ciklusszám
+- `WHILE / LOOP` -a ciklus addig ismétlődik, amíg a feltétel igaz
+- `EXIT`- ciklus vége
+- `NEXT` átugorhatunk lépéseket a ciklusból
+
+```VHDL
+[címke:] FOR azonosito IN intervallum LOOP
+	(szekvenciális kifejezés)
+END LOOP [címke];
+```
+```VHDL
+[címke:] WHILE feltétel LOOP
+	(szekvenciális kifejezés)
+END LOOP [címke];
+```
+```VHDL
+[címke:] EXIT [címke_b] [WHEN feltétel];
+```
+```VHDL
+[címke:] NEXT [cimke_b] [WHEN feltétel];
+```
+**Pl:**
+```VHDL
+FOR i IN 0 TO 5 LOOP
+	x(i)<=enable AND W(i+2);
+	y(0,i)<=w(i);
+END LOOP;
+WHILE (i<10) LOOP
+	WAIT UNTIL clk’EVENT AND clk=‘1’;
+		other statements
+END LOOP;
+```
+```VHDL
+FOR I IN data’RANGE LOOP
+	CASE data(i) IS
+		WHEN ‘0’ => count:=count+1;
+		WHEN OTHERS =>EXIT;
+END CASE;
+END LOOP;
+
+FOR I IN 0 TO 7  LOOP
+	NEXT WHEN i=skip;
+		…
+END LOOP
+```
+**next pl:**
+- `next;`
+- `next cimke;`
+- `next when A>B; 
+- `Next cimke when C=D or done;` -- done is a Boolean variable 
+
+**exit pl:**
+- `exit statement` 
+- `exit;`
+- `exit cimke;` 
+- `exit when A>B;`
+- `nexit cimke when C=D or done;` -- done – boole változó
+
+#### Véges állapotú automata
+![vvéges automata](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/vegess_allap%C5%91otu_automata.png)
+````VHDL
+process (AKT_ALL_reg,start,cont)
+Begin
+	case (AKT_ALL) is
+		when 0 =>	if start = '1' then
+				KOV_ALL <= 1;
+			else
+				 KOV_ALL <= 0;
+			end if;
+		when 1 =>	if cont ='1' then
+				 KOV_ALL <= 4;
+			else
+				 KOV_ALL <= 2;
+			end if;
+		when 2 => KOV_ALL <= 3;
+		when 3 => if cont = '1' then 
+				KOV_ALL <= 4;
+			else	
+				KOV_ALL<=3;
+			end if;					
+		when 4 => KOV_ALL<= 5;
+		when 5 => KOV_ALL<= 0;
+		when others => KOV_ALL <= 0;	
+	end case;
+end process;
+````
+
+```VHDL
+process (clk,reset)
+begin	
+If reset='1' then
+	AKT_ALL<=0;
+	elsif clk'event and clk='0' then
+	AKT_ALL <= KOV_ALL;
+end if;
+end process;
+```
