@@ -7,7 +7,20 @@
   - [Digitális rendszerek absztrakciós szintjei (tranzisztor, kapu, regiszter, processzor)](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#digit%C3%A1lis-rendszerek-absztrakci%C3%B3s-szintjei)
 - Téma 4 - [FPGA alapú tervezés lépései](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#t%C3%A9ma-4---fpga-alap%C3%BA-tervez%C3%A9s-l%C3%A9p%C3%A9sei) és a [VHDL programok szerkezete](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#vhdl-programok-szerkezete)
 - [Téma 5 - VHDL szekvenciális kifejezések](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-5---vhdl-szekvenci%C3%A1lis-kifejez%C3%A9sek)
+	- [a `process`ekről, szekvenciális áramkörökről, D típusú tárolókról](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#process)
+	- [a `SIGNAL`okról](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#signalok)
+	- [változók szerepe](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#variable---v%C3%A1ltoz%C3%B3k)
+	- [`IF` feltétel - számláló megvalsóítása `IF`fel](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#if-felt%C3%A9teles-v%C3%A9grehajt%C3%A1s)
+	- [`CASE` és multiplexer áramkör `CASE` használatával](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#case)
+	- `[WAIT](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#wait)`
+	- [jelre várakozás `WAIT ON`nal](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#wait-on)
+	- [adott ideg várakozás `WAIT FOR`ral](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#wait-for)
+	- [ciklusok: `LOOP`, `FOR/LOOP`, `WHILE/LOOP`, `EXIT`, `NEXT`](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#loop)
+	- [felhasználási példa: véges állapotú automata](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#v%C3%A9ges-%C3%A1llapot%C3%BA-automata)
+	
 ---------
+> Logikai áramkörök öszefoglaló elmélet a Sulineten: [Logikai áramkörök információelméleti alapjai](https://tudasbazis.sulinet.hu/hu/szakkepzes/elektronika-elektrotechnika/digitalis-alaparamkorok/logikai-aramkorok-informacioelmeleti-alapjai)
+
 
 # Téma 1 - bevezetés, FPGA alapok
 **CLB** - konfigurálható logikai tömbök amiket a
@@ -248,6 +261,7 @@ O = ((I0 * I2) + (!I0 * I1));
 - egy két bemenetes multiplexer áramkör -> függvényben kijelöli, hogy melyik LUT eredményét alklamazza
 a LUT elemekben szintén 2 bementes multiplexer áramkör, keresőtáblázatokban a multiplexert leíró Boole függvény.
 > => bemeneti buffferek => adat bementek/kiválasztó bemenetek => kimenetei bufferek
+[egy multiplexer megvalósítás](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/tema5_peldaprogramok/pelda_7c.vhd) és még több lejebb a `case` utasításnál: `[CASE](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#case)` 
 
 ## Digitális rendszerek absztrakciós szintjei
 ### Absztrakciós szintek
@@ -683,6 +697,8 @@ w<=(0=>'1', others=>'0')
 
 # Téma 5 - VHDL szekvenciális kifejezések
 fájl: [5.ppt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/commit/ef9ffb8d1e283bb76510a6ceeec8e29bcec77007)
+
+példaprogramok: [5.téma példaprogramjai](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/tree/master/tema5_peldaprogramok)
 > Ebben a részben a hallgató megismerheti a VHDL-ben alkalmazható fontosabb szekvenciális kifejezéseket: process, feltételes értékadás, ciklusok, signal (jel) és variable (változó) közötti különbség.
 >
 > Egyszerű szekvenciális és kombinációs áramkörökre bemutatott példák alapján felismerheti az egyes kódolási módszerek sajátosságait.
@@ -800,6 +816,23 @@ end Behavioral;
 
 **Szekvenciális áramkört megvalósító process**
 
+> ***Szekvinciális áramkörök/hálózatok***
+> 
+> *A sorrendi hálózatok, vagy más néven a szekvenciális hálózatok feladata, az **időfüggő logikai függvények megvalósítása**.*
+> 
+> *Fontos tulajdonságuk, hogy **a kimeneti események állapotát nem csak a bemeneti feltételek, hanem már a korábban végbement kimeneti események is befolyásolják**.*
+> 
+> ***Aszinkron** szekcinciális hálózatok: 
+> *Ez a szekvenciális hálózat azon fajtája, amelynél **a kimenet előző állapotától való függését visszacsatolással vagy tárolókkal valósítják meg**. A bementi jellemző megváltozására a kimenti jellemző **azonnal reagál**.*
+>
+> ![aszinkron hálózat rajza tároló nélkül](https://cms.sulinet.hu/get/d/a4508fde-acff-452d-9231-77cbac204876/1/4/b/Large/15_4_1__Aszinkron_halozatok_tombvazlata_visszacs.jpg) ![aszinkron tárolóval](https://cms.sulinet.hu/get/d/05c1f5fb-fc34-41cf-9be9-ae9be6f62ff0/1/4/b/Large/15_4_1__Aszinkron_halozatok_tombvazlata_taroloval.jpg)
+>
+> ***Szinkron** szekvenciális hálózatok:* 
+> *Az **állapotváltozás** egy engedélyező jel hatására, azzal **azonos fázisban zajlik le**. Ezt az engedélyező jelet órajelnek, vagy más néven ütemjelnek nevezzük. **A kimenet előző állapotától való függést tárolók segítségével valósítják meg**.*
+>
+> ![szinkron szekvenciálsi hálózat rajza](https://cms.sulinet.hu/get/d/c55f3fe2-375d-41e8-9b00-6e56fa39efcd/1/4/b/Large/15_4_1__Szinkron_halozatok_tombvazlata.jpg)
+
+
 ![Szekvenciális áramkört megvalósító process rajza](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/szekvencialis_aramkor_processe.PNG)
 
 ```VHDL
@@ -816,9 +849,18 @@ end process;
 end Behavioral;
 ```
 
-**Reset nélküli D tároló**
+**Reset nélküli D típusú tároló**
 
 ![Reset nélküli D tároló váza](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/reset_nelkuli_D_tarolo.png)
+
+> ***A D típusú tároló***
+>
+> *Bementére adott információ a kimenetén egy vezérlőjel időtartamával késleltetve jelenik meg. Akkor kapunk `D tárolót`, ha a `J=K` értékkombinációkat kizárjuk.*
+>
+> *igazságtáblázata és rajzjele:*
+> ![D típusú tároló igazságtáblázata](https://cms.sulinet.hu/get/d/56e8905e-7877-40be-94b2-bf3c6364c78b/1/4/b/Normal/15_4_2__D_tarolo_igazsagtablazata.jpg) ![D típusú tároló rajzjele](https://cms.sulinet.hu/get/d/12665802-65d5-499c-b6ca-4d926a8b866a/1/4/b/Normal/15_4_2__D_tipusu_tarolo_rajzjele.jpg)
+>
+> *forrás: [integrált áramkörök logikai típúsai - sulinet](https://tudasbazis.sulinet.hu/hu/szakkepzes/elektronika-elektrotechnika/digitalis-alaparamkorok/integralt-tarolo-aramkorok-logikai-tipusai/j-k-t-d-tarolok)*
 
 ```VHDL
 process (src_clk)
@@ -830,10 +872,11 @@ end process;
 end Behavioral;
 ```
 
-**D tároló Reset jellel**
+**D típusú tároló Reset jellel**
 
 ![Resettel D tároló váza](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/D_tarolo_resettel.png)
 
+Példa: [aszinkron reset a lefutó óraélen](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/tema5_peldaprogramok/pelda_1.vhd), [szinkron reset a lefutó óraélen](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/tema5_peldaprogramok/pelda_3.vhd), [szinkron reset felfutó óraélen](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/tema5_peldaprogramok/pelda_4.vhd), [szinkron reset felfutó óraélen órajel engedélyezéssel](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/tema5_peldaprogramok/pelda_5.vhd)
 ```VHDL
 process (src_clk, reset)
 begin
@@ -852,7 +895,7 @@ end Behavioral;
 
 **példa:**
 
-![pldaáramkör](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/process_pl.png)
+![példaáramkör](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/process_pl.png)
 
 ```VHDL
 LIBRARY ieee;
@@ -912,6 +955,8 @@ END IF;
 ```
 
 **Számláló megvalósítása példa:**
+
+fájl:[binárius felfele számláló szinkron resettel felfutó óraélen órajel enegdélyezővel](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/tema5_peldaprogramok/pelda_6.vhd), [bináris felfele számláló aszinkron resettel felfutó óraélen órajel engedélyezővel](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/tema5_peldaprogramok/pelda_6b.vhd)
 ```VHDL
 LIBRARY ieee;
 USE ieee.std_logic_vector;
@@ -942,6 +987,7 @@ END COUNTER
 
 ![case](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/case.png)
 
+példa: [D típusú tároló esetében](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/tema5_peldaprogramok/pelda_8c.vhd)
 ```VHDL
 [ cimke: ] case kifejezés is 
 	when K1 => szekvenciális kifejezések;
@@ -950,8 +996,8 @@ END COUNTER
  end case [ cimke ] ; 
 ```
 
+multiplexer áramkör esetében `case when` megvalósítás: [fájl](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/tema5_peldaprogramok/pelda_7.vhd)
 ```VHDL
-
 process (sel)
 variable counter : std_logic_vector(BIT_SZAM-1 downto 0);
 begin
@@ -997,14 +1043,15 @@ PROCESS  --nincs erzékenyégi lista!!!!!!!
 	WAIT UNTIL (clk’EVENT AND clk=‘1’);
 	IF (rst=‘1’) THEN
 		output <=“00000000”;
-ELSIF (clk’EVENT AND clk=‘1’) THEN
+        ELSIF (clk’EVENT AND clk=‘1’) THEN
 		output <=input;
-END IF;
+        END IF;
 END PROCESS;
 ```
 
 ![példa](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/wait_until.png)
 
+D típusú tároló `WAIT UNTIL`lal: [fájl](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/tema5_peldaprogramok/pelda_8d.vhd)
 ```VHDL
 entity pelda_8d is
 GENERIC (BIT_SZAM : natural :=8);
@@ -1047,6 +1094,8 @@ END PROCESS
 ***`CASE` és `WAIT ON` plda:***
 
 ![case & wait on](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/case%26wait_on_p%C3%A9lda.png)
+
+példa D típusú tároló esetében: [fájl](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/tema5_peldaprogramok/pelda_8.vhd)
 ```VHDL
 entity pelda_8 is
 GENERIC (BIT_SZAM : natural :=8);
@@ -1070,6 +1119,7 @@ BEGIN
 END PROCESS;
 ```
 
+`if` helyett `case` esettel:[fájl](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/tema5_peldaprogramok/pelda_8c.vhd)
 ```VHDL
 entity pelda_8c is
 GENERIC (BIT_SZAM : natural :=8);
@@ -1125,28 +1175,29 @@ END Behavioral;
 ```
 
 #### `LOOP`
-- `FOR / LOOP` – véges ciklusszám
-- `WHILE / LOOP` -a ciklus addig ismétlődik, amíg a feltétel igaz
-- `EXIT`- ciklus vége
-- `NEXT` átugorhatunk lépéseket a ciklusból
-
+**`FOR / LOOP` – véges ciklusszám**
 ```VHDL
 [címke:] FOR azonosito IN intervallum LOOP
 	(szekvenciális kifejezés)
 END LOOP [címke];
 ```
+**`WHILE / LOOP` -a ciklus addig ismétlődik, amíg a feltétel igaz**
 ```VHDL
 [címke:] WHILE feltétel LOOP
 	(szekvenciális kifejezés)
 END LOOP [címke];
 ```
+**`EXIT`- ciklus vége**
 ```VHDL
 [címke:] EXIT [címke_b] [WHEN feltétel];
 ```
+**`NEXT` átugorhatunk lépéseket a ciklusból**
 ```VHDL
 [címke:] NEXT [cimke_b] [WHEN feltétel];
 ```
+
 **Pl:**
+[fájl](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/tema5_peldaprogramok/pelda_9.vhd)
 ```VHDL
 FOR i IN 0 TO 5 LOOP
 	x(i)<=enable AND W(i+2);
@@ -1157,6 +1208,7 @@ WHILE (i<10) LOOP
 		other statements
 END LOOP;
 ```
+[fájl](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/tema5_peldaprogramok/pelda_10.vhd)
 ```VHDL
 FOR I IN data’RANGE LOOP
 	CASE data(i) IS
@@ -1185,7 +1237,7 @@ END LOOP
 
 #### Véges állapotú automata
 
-![vvéges automata](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/vegess_allap%C5%91otu_automata.png)
+![véges automata](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/vegess_allap%C5%91otu_automata.png)
 ````VHDL
 process (AKT_ALL_reg,start,cont)
 Begin
