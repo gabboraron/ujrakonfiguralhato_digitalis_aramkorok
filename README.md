@@ -698,7 +698,7 @@ w<=(0=>'1', others=>'0')
 # Téma 5 - VHDL szekvenciális kifejezések
 fájl: [5.ppt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/commit/ef9ffb8d1e283bb76510a6ceeec8e29bcec77007)
 
-példaprogramok: [5.téma példaprogramjai](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/tree/master/tema5_peldaprogramok)
+példaprogramok: [5.téma példaprogramjai](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/commit/be6bd0fb4be191fad6f8e1a922521a4188608c82)
 > Ebben a részben a hallgató megismerheti a VHDL-ben alkalmazható fontosabb szekvenciális kifejezéseket: process, feltételes értékadás, ciklusok, signal (jel) és variable (változó) közötti különbség.
 >
 > Egyszerű szekvenciális és kombinációs áramkörökre bemutatott példák alapján felismerheti az egyes kódolási módszerek sajátosságait.
@@ -822,10 +822,10 @@ end Behavioral;
 > 
 > *Fontos tulajdonságuk, hogy **a kimeneti események állapotát nem csak a bemeneti feltételek, hanem már a korábban végbement kimeneti események is befolyásolják**.*
 > 
-> ***Aszinkron** szekcinciális hálózatok: 
+> ***Aszinkron** szekcinciális hálózatok:* 
 > *Ez a szekvenciális hálózat azon fajtája, amelynél **a kimenet előző állapotától való függését visszacsatolással vagy tárolókkal valósítják meg**. A bementi jellemző megváltozására a kimenti jellemző **azonnal reagál**.*
 >
-> ![aszinkron hálózat rajza tároló nélkül](https://cms.sulinet.hu/get/d/a4508fde-acff-452d-9231-77cbac204876/1/4/b/Large/15_4_1__Aszinkron_halozatok_tombvazlata_visszacs.jpg) ![aszinkron tárolóval](https://cms.sulinet.hu/get/d/05c1f5fb-fc34-41cf-9be9-ae9be6f62ff0/1/4/b/Large/15_4_1__Aszinkron_halozatok_tombvazlata_taroloval.jpg)
+> ![aszinkron tárolóval](https://cms.sulinet.hu/get/d/05c1f5fb-fc34-41cf-9be9-ae9be6f62ff0/1/4/b/Large/15_4_1__Aszinkron_halozatok_tombvazlata_taroloval.jpg)
 >
 > ***Szinkron** szekvenciális hálózatok:* 
 > *Az **állapotváltozás** egy engedélyező jel hatására, azzal **azonos fázisban zajlik le**. Ezt az engedélyező jelet órajelnek, vagy más néven ütemjelnek nevezzük. **A kimenet előző állapotától való függést tárolók segítségével valósítják meg**.*
@@ -858,6 +858,7 @@ end Behavioral;
 > *Bementére adott információ a kimenetén egy vezérlőjel időtartamával késleltetve jelenik meg. Akkor kapunk `D tárolót`, ha a `J=K` értékkombinációkat kizárjuk.*
 >
 > *igazságtáblázata és rajzjele:*
+>
 > ![D típusú tároló igazságtáblázata](https://cms.sulinet.hu/get/d/56e8905e-7877-40be-94b2-bf3c6364c78b/1/4/b/Normal/15_4_2__D_tarolo_igazsagtablazata.jpg) ![D típusú tároló rajzjele](https://cms.sulinet.hu/get/d/12665802-65d5-499c-b6ca-4d926a8b866a/1/4/b/Normal/15_4_2__D_tipusu_tarolo_rajzjele.jpg)
 >
 > *forrás: [integrált áramkörök logikai típúsai - sulinet](https://tudasbazis.sulinet.hu/hu/szakkepzes/elektronika-elektrotechnika/digitalis-alaparamkorok/integralt-tarolo-aramkorok-logikai-tipusai/j-k-t-d-tarolok)*
@@ -956,7 +957,7 @@ END IF;
 
 **Számláló megvalósítása példa:**
 
-fájl:[binárius felfele számláló szinkron resettel felfutó óraélen órajel enegdélyezővel](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/tema5_peldaprogramok/pelda_6.vhd), [bináris felfele számláló aszinkron resettel felfutó óraélen órajel engedélyezővel](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/tema5_peldaprogramok/pelda_6b.vhd)
+fájl:[bináris felfele számláló *szinkron* resettel felfutó óraélen órajel enegdélyezővel](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/tema5_peldaprogramok/pelda_6.vhd), [bináris felfele számláló *aszinkron* resettel felfutó óraélen órajel engedélyezővel](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/tema5_peldaprogramok/pelda_6b.vhd)
 ```VHDL
 LIBRARY ieee;
 USE ieee.std_logic_vector;
