@@ -1,4 +1,5 @@
 # Tartalom
+- [Logikai áramkörök elmélete hülyéknek]()
 - [Téma 1 - bevezetés, FPGA alapok](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#téma-1---bevezetés-fpga-alapok)
 - [Téma 2 - FPGA áramkörök szerkezete](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#téma-2---fpga-áramkörök-szerkezete)
   - [Vivado projekt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#vivado-projekt)
@@ -19,8 +20,32 @@
 	- [felhasználási példa: véges állapotú automata](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#v%C3%A9ges-%C3%A1llapot%C3%BA-automata)
 	
 ---------
-> Logikai áramkörök öszefoglaló elmélet a Sulineten: [Logikai áramkörök információelméleti alapjai](https://tudasbazis.sulinet.hu/hu/szakkepzes/elektronika-elektrotechnika/digitalis-alaparamkorok/logikai-aramkorok-informacioelmeleti-alapjai)
 
+# Logikai áramkörök elmélete hülyéknek
+> Az eredeti a Sulineten: [Logikai áramkörök információelméleti alapjai](https://tudasbazis.sulinet.hu/hu/szakkepzes/elektronika-elektrotechnika/digitalis-alaparamkorok/logikai-aramkorok-informacioelmeleti-alapjai) alább ennek a jegyzete.
+> 
+> **Két** fizikai mennyiség (**áram, feszültség**) **egymással való leképezése** lehet 
+> - **analóg**: a leképző mennyiség **változása folyamatos**, tehát **bármilyen érték**et felvehet
+> - **digitális**: a leképző mennyiség **változása nem folyamatos**, hanem ugrásszerű, tehát **csak [diszkrét](https://regi.tankonyvtar.hu/hu/tartalom/tamop425/0010_2A_21_Nemeth_Renata-Simon_David_Tarsadalomstatisztika_magyar_es_angol_nyelven/ch02s04.html) érték**et vehet fel. Ezt használjuk a digitális technikában, azaz az integrált áramkörökben amirtől [G.Moore híres megállapítás](https://en.wikipedia.org/wiki/Moore%27s_law)a született.
+> Mindkét esetben az **időben lefolyás függvénykapcsolat**tal megoldható.
+>
+> **Bináris számrendszer röviden**
+>
+> Mivel a kétállaopotú áramkörben a kettes számrendszer a legkönyebben alkalmazható így nem megkerülhető számunkra. Egy bináris szám megadása: ![+/-sum k megy m-től j-ig (aˇk*2^k](https://cms.sulinet.hu/get/d/c46bafa7-b4a7-4699-928d-c7479994df33/1/9/[p=node()[@hierarchy='flowHierarchy']/node()[0]/node()[@hierarchy='textStructure']/node()[0]/node()[2]/node()[@hierarchy='data']/node()[0]]/b/normal_png/formula_.png)* ahol `a=0` vagy `a=1`
+>
+> *Átváltás 10esből 2esbe:*
+> [![DECIMAL TO BINARY](https://i.ytimg.com/vi/rsxT4FfRBaM/hqdefault.jpg?sqp=-oaymwEZCNACELwBSFXyq4qpAwsIARUAAIhCGAFwAQ==&rs=AOn4CLCBveE0gqdZClFHCM93cyb--BDvDw)](https://www.youtube.com/watch?v=rsxT4FfRBaM&t=167s)
+>
+> *Átváltás 2esből 10esbe:*
+> [![BINARY TO DECIMAL](https://i.ytimg.com/vi/VLflTjd3lWA/hqdefault.jpg?sqp=-oaymwEZCNACELwBSFXyq4qpAwsIARUAAIhCGAFwAQ==&rs=AOn4CLDkRe307VwJigqXFvd7WsHGVtSAqQ)](https://www.youtube.com/watch?v=VLflTjd3lWA)
+>
+> **Hogyan lesz az *információ*ból *adat* és az *adat*ból *kód***
+> 
+> Az **infomráció** alapvetően **bizonyos fokú tájékozatlanságot szüntet meg** és szimbólumokból áll, a *beszéd* esetében *szavak*, *írás* esetében *betűk* és így tovább. Így **az információ** digitális rendszerekben való formája **az adat**, ami a logikai áramkörökben **kód** formájában jelenik meg.
+> 
+
+
+-----------
 
 # Téma 1 - bevezetés, FPGA alapok
 **CLB** - konfigurálható logikai tömbök amiket a
