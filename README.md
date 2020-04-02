@@ -12,7 +12,7 @@
 	- [változók szerepe](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#variable---v%C3%A1ltoz%C3%B3k)
 	- [`IF` feltétel - számláló megvalsóítása `IF`fel](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#if-felt%C3%A9teles-v%C3%A9grehajt%C3%A1s)
 	- [`CASE` és multiplexer áramkör `CASE` használatával](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#case)
-	- `[WAIT](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#wait)`
+	- [`WAIT`](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#wait)
 	- [jelre várakozás `WAIT ON`nal](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#wait-on)
 	- [adott ideg várakozás `WAIT FOR`ral](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#wait-for)
 	- [ciklusok: `LOOP`, `FOR/LOOP`, `WHILE/LOOP`, `EXIT`, `NEXT`](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#loop)
