@@ -1,5 +1,5 @@
 # Tartalom
-- [Logikai áramkörök elmélete hülyéknek]()
+- [Logikai áramkörök elmélete hülyéknek](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#logikai-%C3%A1ramk%C3%B6r%C3%B6k-elm%C3%A9lete-h%C3%BCly%C3%A9knek)
 - [Téma 1 - bevezetés, FPGA alapok](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#téma-1---bevezetés-fpga-alapok)
 - [Téma 2 - FPGA áramkörök szerkezete](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#téma-2---fpga-áramkörök-szerkezete)
   - [Vivado projekt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#vivado-projekt)
@@ -41,8 +41,47 @@
 >
 > **Hogyan lesz az *információ*ból *adat* és az *adat*ból *kód***
 > 
-> Az **infomráció** alapvetően **bizonyos fokú tájékozatlanságot szüntet meg** és szimbólumokból áll, a *beszéd* esetében *szavak*, *írás* esetében *betűk* és így tovább. Így **az információ** digitális rendszerekben való formája **az adat**, ami a logikai áramkörökben **kód** formájában jelenik meg.
+> Az **infomráció** alapvetően **bizonyos fokú tájékozatlanságot szüntet meg** és szimbólumokból áll, a *beszéd* esetében *szavak*, *írás* esetében *betűk* és így tovább. Így **az információ** digitális rendszerekben való formája **az adat**, ami a logikai áramkörökben **kód** formájában jelenik meg, azaz *kódolás tehát két szimbólumhalmaz egymáshoz rendelése*. Erre több módszer is rendelkezésünkre áll, van amelyik egy menetben végzi el a kódolást: [BCD](https://hu.wikipedia.org/wiki/Bin%C3%A1risan_k%C3%B3dolt_decim%C3%A1lis), [Aiken](https://en.wikipedia.org/wiki/Aiken_code) stb, vag több menetben mint a [Johnson vagy a Gray kód](https://www.gyakorikerdesek.hu/tudomanyok__termeszettudomanyok__4889075-mi-a-kulonbseg-a-johnson-kod-es-a-gray-kod-kozott). Mivel a jel minősége romolhat, azaz **a bináris helyiértékekben változás történik** ezért a kód redundanciát növeljük, azaz, olyan plusz biteket adunk hozzá ami vagy *ellenőrzik* a hibát, vagy *ki is javítják*. Ellenőrzésre alkalmas a paritás bit, míg javításra *több* speciálisan használt paritás bit használható, például a Haming féle távolság segítségével.
 > 
+> **Logikai függvények**
+>
+> Az **időfüggetlen** logikai függvények közös jellemzője, hogy a függő (**kimenet**i) változó értéke **csak a** független (**bemeneti**) **változó értékétől függ**. Az ilyen típusú függvényeket valósítják meg a **kombinációs logikai hálózatok**.
+>
+> Az **időfüggő** logikai függvények jellemzője, hogy a függő (**kimeneti**) változó aktuális értékét **nemcsak a független változók adott időpontban felvett értéke, hanem más időpillanatban felvett értékei is meghatározzák**. Ez azt jelenti, hogy **az események sorrendje is befolyásolja a kimenet állapotát**. Az ilyen típusú függvényeket megvalósító hálózatokat nevezzük **szekvenciális hálózatok**nak.
+>
+> - **Diszjunktív szabályos alak** olyan logikai függvény, amely **mintermek VAGY kapcsolatá**ból áll.
+> - **Konjunktív szabályos alak** olyan logikai függvény, amely **maxtermek ÉS kapcsolatá**ból áll.
+> - **Term**: a **független változók** azon **csoportja**, amelyeket **azonos logikai kapcsolat**ra jellemző szimbólummal kapcsolunk össze.
+> - **Minterm**: a **független változók logikai ÉS kapcsolata**, amelyben minden változó (igaz vagy tagadott formában) egyszer és csakis egyszer szerepel.
+> - **Maxterm:** a **független változók logikai VAGY kapcsolata**, amelyben minden változó (igaz vagy tagadott formában) egyszer és csakis egyszer szerepel.
+>
+
+## Logikai hálózatok
+> A felhasználás jellegétől függően ugyanazt a műszaki feladatot diszkrét elemekkel (jelfogó, dióda, ellenállás, tranzisztor) felépített hálózattal, vagy integrált áramkörökkel is megoldhatjuk. A tervezés során meghatározzuk, hogy a megvalósításhoz szükséges logikai függvények eredménye a bemeneti változókon kívül függ-e az események bekövetkezési sorrendjétől. **A kombinációs hálózatok időfüggetlen logikai függvényeket valósítanak meg. A sorrendi (szekvenciális) hálózatok időfüggő logikai függvényeket valósítanak meg,** ezek **memóriával is** rendelkező logikai áramkörök. A sorrendi (szekvenciális) logikai hálózatban a bemeneti logikai változók kapcsolatban vannak a kimeneti logikai változókkal, vagyis a rendszerben visszacsatolás van. A kimeneti jel függ az események sorrendjétől.
+>
+> [kombinációs logikai hálózat](https://cms.sulinet.hu/get/d/af518522-9572-4495-a4f5-2b501a0da8b8/1/5/b/Normal/15_3_1__Kombinacios_logikai_halozat_tombvazlata.jpg) ![szekvenciális hálózat](https://cms.sulinet.hu/get/d/d109d561-edc8-4683-bb66-23c5cf8d3c56/1/5/b/Normal/15_3_1__Aszinkron_halozatok_tombvazlata.jpg)
+>
+> **Logikai kapuk**
+>
+> *A kombinációs hálózatok legfontosabb tulajdonsága, hogy a bemeneti események az időtől függetlenül egyértelműen meghatározzák a kimeneti eseményeket.* Logikai kapuknak (logic gates) nevezzük a logikai alapfüggvényeket megvalósító áramköri elemeket. Egy digitális integrált áramkörben – az áramkör bonyolultságától függően – egy vagy több logikai kapu található.
+A továbbiakban az alapműveleteknek megfelelően bemutatjuk a különböző logikai kapuk rajzjelét és igazságtáblázatát
+>
+> **ÉS kapu**
+>
+> ![ÉS táblázat](https://cms.sulinet.hu/get/d/6117791d-e42a-41d1-b65c-681184683f2a/1/5/b/Normal/15_3_2__ES_kapu_igazsagtablazat.jpg) ![ÉS kapcsolási rajza](https://cms.sulinet.hu/get/d/bc214b3c-3f7e-4ec4-ac0b-a6fdbef439f2/1/5/b/Normal/15_3_2__ES_kapu_hasznalt_rajzjele.jpg) ![ÉS rajzjele](https://cms.sulinet.hu/get/d/45022139-4812-41bd-b531-84fa90a78ca3/1/5/b/Normal/15_3_2__ES_kapu_szabvanyos_rajzjele.jpg)
+>
+> **NEM kapu**
+>
+> ![NEM igazságtábla](https://cms.sulinet.hu/get/d/7a9b7da5-9378-4d95-b78a-08ddb1398547/1/5/b/Normal/15_3_2__NEM_kapu_igazsagtablazat.jpg) ![NEM rajzjele](https://cms.sulinet.hu/get/d/f240d0bd-6ac4-43da-ae5d-7c03456460cb/1/5/b/Normal/15_3_2__NEM_kapu_hasznalt_rajzjele.jpg) ![NEM rajz](https://cms.sulinet.hu/get/d/d735d372-aae4-4671-8260-0056ad484d53/1/5/b/Normal/15_3_2__NEM_kapu_szabvanyos_rajzjele.jpg)
+>
+> **VAGY kapu**
+> 
+> ![VAGY igazságtábla](https://cms.sulinet.hu/get/d/9db4229a-1413-4243-9bc4-5bb5af852df9/1/5/b/Normal/15_3_2__VAGY_kapu_igazsagtablazat.jpg) ![VAGY rajza](https://cms.sulinet.hu/get/d/1234a8ea-6fd9-4032-aba2-20b1ab1fc4e0/1/5/b/Normal/15_3_2__VAGY_kapu_hasznalt_rajzjele.jpg) ![VAGY rajza](https://cms.sulinet.hu/get/d/3bb09e6f-6ffb-4dee-9a9f-0217e67a0eda/1/5/b/Normal/15_3_2__VAGY_kapu_szabvanyos_rajzjele.jpg)
+>
+> **ÉS-NEM (NAND) kapu**
+>
+> **VAGY-NEM (NOR) kapu**
+>
 
 
 -----------
