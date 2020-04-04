@@ -22,8 +22,8 @@
 ---------
 
 # Logikai áramkörök elmélete hülyéknek
-> Az eredeti a Sulineten: [Logikai áramkörök információelméleti alapjai](https://tudasbazis.sulinet.hu/hu/szakkepzes/elektronika-elektrotechnika/digitalis-alaparamkorok/logikai-aramkorok-informacioelmeleti-alapjai) alább ennek a jegyzete.
-> 
+Az eredeti a Sulineten: [Logikai áramkörök információelméleti alapjai](https://tudasbazis.sulinet.hu/hu/szakkepzes/elektronika-elektrotechnika/digitalis-alaparamkorok/logikai-aramkorok-informacioelmeleti-alapjai) alább ennek a jegyzete.
+
 > **Két** fizikai mennyiség (**áram, feszültség**) **egymással való leképezése** lehet 
 > - **analóg**: a leképző mennyiség **változása folyamatos**, tehát **bármilyen érték**et felvehet
 > - **digitális**: a leképző mennyiség **változása nem folyamatos**, hanem ugrásszerű, tehát **csak [diszkrét](https://regi.tankonyvtar.hu/hu/tartalom/tamop425/0010_2A_21_Nemeth_Renata-Simon_David_Tarsadalomstatisztika_magyar_es_angol_nyelven/ch02s04.html) érték**et vehet fel. Ezt használjuk a digitális technikában, azaz az integrált áramkörökben amirtől [G.Moore híres megállapítás](https://en.wikipedia.org/wiki/Moore%27s_law)a született.
@@ -59,7 +59,7 @@
 ## Logikai hálózatok
 > A felhasználás jellegétől függően ugyanazt a műszaki feladatot diszkrét elemekkel (jelfogó, dióda, ellenállás, tranzisztor) felépített hálózattal, vagy integrált áramkörökkel is megoldhatjuk. A tervezés során meghatározzuk, hogy a megvalósításhoz szükséges logikai függvények eredménye a bemeneti változókon kívül függ-e az események bekövetkezési sorrendjétől. **A kombinációs hálózatok időfüggetlen logikai függvényeket valósítanak meg. A sorrendi (szekvenciális) hálózatok időfüggő logikai függvényeket valósítanak meg,** ezek **memóriával is** rendelkező logikai áramkörök. A sorrendi (szekvenciális) logikai hálózatban a bemeneti logikai változók kapcsolatban vannak a kimeneti logikai változókkal, vagyis a rendszerben visszacsatolás van. A kimeneti jel függ az események sorrendjétől.
 >
-> [kombinációs logikai hálózat](https://cms.sulinet.hu/get/d/af518522-9572-4495-a4f5-2b501a0da8b8/1/5/b/Normal/15_3_1__Kombinacios_logikai_halozat_tombvazlata.jpg) ![szekvenciális hálózat](https://cms.sulinet.hu/get/d/d109d561-edc8-4683-bb66-23c5cf8d3c56/1/5/b/Normal/15_3_1__Aszinkron_halozatok_tombvazlata.jpg)
+> ![kombinációs logikai hálózat](https://cms.sulinet.hu/get/d/af518522-9572-4495-a4f5-2b501a0da8b8/1/5/b/Normal/15_3_1__Kombinacios_logikai_halozat_tombvazlata.jpg)  ![szekvenciális hálózat](https://cms.sulinet.hu/get/d/d109d561-edc8-4683-bb66-23c5cf8d3c56/1/5/b/Normal/15_3_1__Aszinkron_halozatok_tombvazlata.jpg)
 >
 > **Logikai kapuk**
 >
@@ -80,10 +80,34 @@ A továbbiakban az alapműveleteknek megfelelően bemutatjuk a különböző log
 >
 > **ÉS-NEM (NAND) kapu**
 >
+> NAND kapcsolatot megvalósító áramköri elem.  Tehát a NAND kapu **kimenő jele akkor és csakis akkor 0, ha mindkét bemenő jel értéke egyidejűleg 1** értékű, ezért a NAND kapu bemenetén a 0 jel a meghatározó.
+>
 > **VAGY-NEM (NOR) kapu**
 >
-
-
+> NOR kapcsolatot megvalósító áramköri elem. Tehát a NOR kapu **kimenő jele akkor és csakis akkor 1, ha mindkét bemenő jel értéke egyidejűleg 0** értékű, ezért a VAGY kapu bemenetén az 1 jel a meghatározó.
+> 
+> **Ekvivalencia kapu**
+>
+> Az EKVIVALENCIA kapu **kimenő jele akkor 1, ha a bemenő jelek logikai értéke megegyezik**. A kapu a logikai hálózatok leegyszerűsítését szolgálja.
+>
+> **ANTIVALENCIA (KIZÁRÓ-VAGY) kapu**
+>
+> kimenő jele akkor 1, ha a bemenő jelek logikai értéke különböző.
+## A funkcionálisan teljes rendszer
+> Funkcionálisan teljes rendszernek nevezzük azokat a **logikai függvényeket, megvalósító kapukat, amelyekből bármilyen tetszőleges hálózat megvalósítható.**
+> A funkcionálisan teljes rendszer másik fontos előnye, hogy a logikai áramkör megvalósításához csak meghatározott típusú kapuáramkör szükséges.
+> 
+> **NEM-ÉS-VAGY rendszer:** Tetszőleges logikai függvény kifejezhető az ÉS, a VAGY és a NEGÁCIÓ műveletet megvalósító logikai kapuk megfelelő kombinációjával. Gyakorlati megvalósítás szempontjából a nem terjedt el, mivel áramköri szempontból sokkal egyszerűbb az ÉS és a VAGY kapu helyett a NEM-ÉS (NAND), illetve a NEM-VAGY (NOR).
+> 
+> **NAND-rendszer:** Tetszőleges logikai függvény kifejezhető a NEM-ÉS (NAND) műveletet megvalósító logikai kapuk megfelelő összekapcsolásával. Az ilyen áramköri megvalósítást nevezzük NAND-rendszernek.
+>
+> ![NAND rajza](https://cms.sulinet.hu/get/d/414a8f2f-123e-4f34-b236-daeaa4fc5a45/1/5/b/Normal/15_3_3__2_A_fuggveny_megvalositasa_NAND_rendszerben.jpg) ![NAND alapműveletekkel](https://cms.sulinet.hu/get/d/b69845f0-7e33-48b4-a599-77495e1decd3/1/5/b/Normal/15_3_3__Alapfuggvenyek_NAND_kapukkal.jpg)
+>
+> **Kétszintes hálózat:** Ha a **bemeneti változók a kimenetre két kapuáramkörön keresztül** jutnak el, akkor kétszintű hálózatról beszélünk.
+> **Háromszintű logikai hálózat:** Ha egy diszjunktív vagy konjunktív alakban megadott logikai függvényt – újabb logikai művelettel – **egy vagy több másik függvénnyel bővítjük, akkor az új logikai függvény már nem valósítható meg kétszintű hálózattal**. Az ilyen típusú logikai függvényeket megvalósító hálózatokat többszintű logikai hálózatoknak nevezzük.
+> **Négyszintű logikai hálózat:** 
+>
+> ![négyszintű logikai hálózat](https://cms.sulinet.hu/get/d/9d165d91-132a-42d0-a5fd-1041011ed093/1/5/b/Large/15_3_4__2_Negyszintu_logikai_halozat.jpg)
 -----------
 
 # Téma 1 - bevezetés, FPGA alapok
