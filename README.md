@@ -1,5 +1,9 @@
 # Tartalom
 - [Logikai áramkörök elmélete hülyéknek](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#logikai-%C3%A1ramk%C3%B6r%C3%B6k-elm%C3%A9lete-h%C3%BCly%C3%A9knek)
+- [Könyvek](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/tree/master/k%C3%B6nyvek)
+	- [VHDL oktatási segédlet 1.13](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/k%C3%B6nyvek/VHDL-szintaktika.pdf)
+	- [Free range VHDL - Bryan Mealy, Fabrizio Tappero](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/k%C3%B6nyvek/free_range_vhdl.pdf) - [freerangefactory.org](http://freerangefactory.org/cores.html)
+	- [Mikrovezérlő programozása assembly nyelven](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/k%C3%B6nyvek/assembly_programozas.pdf)
 - [Téma 1 - bevezetés, FPGA alapok](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#téma-1---bevezetés-fpga-alapok)
 - [Téma 2 - FPGA áramkörök szerkezete](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#téma-2---fpga-áramkörök-szerkezete)
   - [Vivado projekt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#vivado-projekt)
