@@ -22,7 +22,8 @@
 	- [adott ideg várakozás `WAIT FOR`ral](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#wait-for)
 	- [ciklusok: `LOOP`, `FOR/LOOP`, `WHILE/LOOP`, `EXIT`, `NEXT`](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#loop)
 	- [felhasználási példa: véges állapotú automata](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#v%C3%A9ges-%C3%A1llapot%C3%BA-automata)
-- [Téma 7 - Konkurens VHDL utasítások]()	
+- [Téma 7 - Konkurens VHDL utasítások](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-7---konkurens-vhdl-utas%C3%ADt%C3%A1sok-k%C3%B3dfejelszt%C3%A9s-a-konkurencia-felhaszn%C3%A1l%C3%A1sval)	
+- [Téma 8 - Tesztelés]() - [eredeti pdf](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/k%C3%B6nyvek/FPGA%20aramkorok%20tesztelese_2017_2018_v4_2017_11_27_e(1).pdf)
 ---------
 
 # Logikai áramkörök elmélete hülyéknek
@@ -1368,8 +1369,9 @@ If reset='1' then
 end if;
 end process;
 ```
+-----------
 # Téma 7 - Konkurens VHDL utasítások, kódfejelsztés a konkurencia felhasználásval
-fájlok: [téma 7 ppt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/T7_KMOOC_UKDA.pptx), [VHDL mintakód]()
+fájlok: [téma 7 ppt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/T7_KMOOC_UKDA.pptx), [VHDL mintakód `generate`-re](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/pelda_12_generate.vhd)
 
 > Ebben a fejezetben a hallgató megismerheti a konkurens VHDL utasításokat. Összehasonlítva a szekvenciális utasításokkal, több típusú áramkör szekvenciális és konkurens utasítással is megvalósítható. 
 > 
@@ -1525,3 +1527,73 @@ USE ieee. Std_logic_vektor.all;
 		CONSTANT vector : STD_LOGIC_VECTOR (3 downto 0):=”1111”;
 	END példa_csomag;
 ```
+--------
+# Téma 8 - Tesztelés
+fájlok: [pdf](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/k%C3%B6nyvek/FPGA%20aramkorok%20tesztelese_2017_2018_v4_2017_11_27_e(1).pdf), [mintaprogramok](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/tree/master/t%C3%A9ma%208%20-%20M%C3%BCk%C3%B6d%C3%A9s%20k%C3%B6zbeni%20tesztel%C3%A9s-20200419)
+
+> Ebben a részben a hallgató megismerkedhet az FPGA-ban elkészített modulok tesztelési lehetőségeivel. A témában részletesen van tárgyalva egy FPGA-ba betöltött modul működés közbeni tesztelése.
+> 
+> A példaprogram alapján egy tcl szkript programban van megvalósítva egy áramkör működés közben való tesztelése. A tesztelés során a tesztelendő jelek az FPGA-ba integrált ILA modulon keresztül vannak kivezetve az FPGA laphoz csatolt számítógépen futó grafikus felületre.
+>
+> A VIvado programból a tcl szkrip futtatásával automatikusan létrejön a tesztkörnyezet.
+>
+> Javasolt, hogy a minta alapján a hallgató akár egy általa elkészített VHDL modulra, vagy a példaprogramok közül kiválasztott modulra készítse elő a szimulációs környezetet.
+
+Tesztelésre több lehetőség is van:
+- áramkör szimulációja
+- külső méréssel
+- logikai analizálás az FPGA-n
+
+Szimulációk:
+- behavioral simulation - viselkedési szimuláció szintezést követően
+- functional simulation - funkcionális szimuláció fordítást követően
+- static timing analysis - statikus időanalízis leképzésifázis után
+- timing analysis - az elhelyezéstés huzalozástkövetően
+- az áramkör teljesítményanalízise (szimuláción kívül)
+
+*Sokszor az FPGA áramkör helyes működést mutat önmagában, bekötés után viszont helytelent. A probléma megoldásához működés közben kell vizsgálni a jeleket.* 
+
+Az adatok az FPGA áramkörből a JTAG láncon vannak kivezetve ami USB vagy Ethernettel csatlakozik a számítógéphez ahol a jelek megjelenhetnek grafikusan ábrázolva. 
+
+## Tesztelendő áramkör
+- előosztó és számlálóból álló áramkör
+teljes fájl: [téma 8.../top_level_2.vhd](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/t%C3%A9ma%208%20-%20M%C3%BCk%C3%B6d%C3%A9s%20k%C3%B6zbeni%20tesztel%C3%A9s-20200419/top_level_2.vhd)
+````VHDL
+modulo : process(src_clk)
+
+variable x: integer range 1023 downto 0 := 0;
+variable q_div: STD_LOGIC:= '0';
+
+begin
+if src_clk'event and src_clk='1' then
+	if x<div_val then 
+		x:=x+1;
+		--q_div:=q_div;
+	else
+		x:=0;
+		q_div:=not(q_div);
+	end if;
+	q_clk<=q_div;
+end if;
+
+end process modulo;
+````
+````VHDL
+szamlalo: process(q_clk, reset)
+variable sz: std_logic_vector(3 downto 0);
+begin
+
+if q_clk'event and q_clk='1' and start='1' then
+if  reset='1' then
+ sz:=(others=>'0');
+ else
+    sz:=sz+1;
+    end if;
+end if;
+    q<=sz;
+end process szamlalo;
+````
+
+Tesztelés *Vivado*ban:
+- Set Up Debug varázsló (Debug Cores integrálással)
+- XDC modul a tervhez kapcsolása
