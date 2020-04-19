@@ -22,7 +22,7 @@
 	- [adott ideg várakozás `WAIT FOR`ral](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#wait-for)
 	- [ciklusok: `LOOP`, `FOR/LOOP`, `WHILE/LOOP`, `EXIT`, `NEXT`](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#loop)
 	- [felhasználási példa: véges állapotú automata](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#v%C3%A9ges-%C3%A1llapot%C3%BA-automata)
-	
+- [Téma 7 - Konkurens VHDL utasítások]()	
 ---------
 
 # Logikai áramkörök elmélete hülyéknek
@@ -1367,4 +1367,161 @@ If reset='1' then
 	AKT_ALL <= KOV_ALL;
 end if;
 end process;
+```
+# Téma 7 - Konkurens VHDL utasítások, kódfejelsztés a konkurencia felhasználásval
+fájlok: [téma 7 ppt](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/T7_KMOOC_UKDA.pptx), [VHDL mintakód]()
+
+> Ebben a fejezetben a hallgató megismerheti a konkurens VHDL utasításokat. Összehasonlítva a szekvenciális utasításokkal, több típusú áramkör szekvenciális és konkurens utasítással is megvalósítható. 
+> 
+> Példaprogramok tanulmányozásával elsajátíthatja a fontosabb utasítások működését és különböző gyakorlati alkalmazását.
+>
+> A generikus (`GENERIC`) paraméterek valamint a `FOR GENERATE` és  `IF GENERATE` utasítások alkalmazásával lehetőség van egyszerű módon bonyolultabb áramköröket is megtervezni.
+>
+> A `Block` típusú utasítás működését is megismerheti a hallgató, viszont a kurzus keretében nem alkalmazzuk. A kurzus terjedelme ugyanakkor nem teszi lehetővé a függvények (`FUNCTION`) és eljárások bemutatását.
+
+## Szekvenciális VS konkurens utasítások
+> - A **szekvenciális processzen belül** abban a sorrendben ahogy jönnek a processzen belül.
+> - A **konkurens utasítások egymással párhuzamosan** hajtódnak végre. 
+>
+> **Két külön process párhuzamosan hajtódik végre**, a bennük levő utasítások viszont egymás után egymáshoz képest.
+>
+`SIGNAL` hozzárendelés konkurensen, **feltétel nélkül**i: `a <= b` - azonnali utasítás
+`SIGNAL` hozzárendelés konkurensen, **feltétellel**: `WHEN`-el, ezzel lehet kétirányú síneket megadni:
+````VHDL
+jel <= [kifejezes when 	feltetel 
+			else ...]
+	kifejezés;
+````
+pl: `x<=a when c ='0';` vagy `x<=a when c = '0' else b;` 
+
+Az összes eset lekezelése:
+```VHDL
+with szelekcios_bemenet select
+jel<= kifejezes_1 when választási_lehetőségek_1,
+      ...
+      kifejezés_n when választási_lehetőségek_n,
+      [kifejezés when others];
+```
+Az `others` akkor kell ha minden egyéb jelet kezelünk és nem adjuk meg pontosan a bemenő jelet.
+
+Block utasításokban párhuzamosíthatunk, mint alábba példa, vagy a következőket is megtehetjük: 
+- Port és generikus változok deklarálása
+- (port map és generic map)
+- Típus és alltípus deklarációs
+- Allprogramrészek deklaráslás + megvalósítás  
+- Konstansm változó és signal deklarálás
+- Komponens deklarálás
+- File, attributum és konfiguráció deklarálás
+- többszintes egymásba ágyazás: block a blockban
+
+````
+entity pelda is
+ Port (-- S0 : in STD_LOGIC;
+           --S1 : in STD_LOGIC;
+           I0 : in STD_LOGIC;
+           I1 : in STD_LOGIC;
+           I2 : in STD_LOGIC;
+           I3 : in STD_LOGIC;
+           q : out STD_LOGIC);
+end pelda;
+
+architecture Behavioral of pelda is
+Signal s0, s1 : std_logic;
+Begin
+
+-- párhuzamosan a következők:
+
+RTL_AND_1: process(I0, I1)	
+Begin
+	S0<= I0 and I1;
+end process;
+
+RTL_OR: process(S0, I2)	
+Begin
+	S1<= S0 or (not I2);
+end process;
+
+RTL_AND_2: process(S1, I3)	
+Begin
+	q<= S1 and  (not I2);
+end process;
+
+-- párhuzamosítás vége
+
+End process;
+````
+
+## blokkok belsejében hozzárendelés vezérlése `guard`-dal
+
+```VHDL
+Label: BLOCK (guard expression)
+	[declarative part]
+BEGIN
+	(concurrent guarded and unguarded statements)
+END BLOCK label;
+```
+
+## Hogyan tervezzük meg a kódot a konkurenciára alapozva?
+- lehetővé tenni  közös részek megosztását és újrahasznosítását
+- elemeket a könyvtárba (`LIBRARY`) helyezni
+- kódrészek megírhatóak:
+	- komponens
+	- függvényként
+	- eljárásként
+
+## `Generate`
+mintafájl: [pelda_12_generate.vhd](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/pelda_12_generate.vhd)
+
+Két verzióval: `FOR ... GENERATE` és `IF ... GENERATE`. Előbbi egy ciklusként adott számszor rakja be a modult, utóbbi kivételeket kezelehet le.
+
+pl `FOR`os verzióra:
+````VHDL
+Label1: FOR azonosító IN intervallum GENERATE
+	(konkurens hozzárendelés)
+END GENERATE;
+````
+péld `IF`es verzióra:
+````VHDL
+Label2: IF feltétel GENERATE
+	(konkurens hozzárendelés)
+END GENERATE;
+````
+természetesen egymásban is használható egyik a másikkal pl:
+````VHDL
+Cimke1: FOR ciklus_azonosító IN intervallum GENERATE
+	...
+	Cimke2: IF feltétel GENERATE
+		(konkurens  hozzárendelés)
+	END GENERATE;
+	...
+END GENERATE;
+````
+
+## `Package`
+- komponensek (`COMPONENTS`) 
+- függvények (`FUNCTIONS`) 
+- eljárásokon (`PROCEDURES`) 
+- típusok `TYPE`
+- konstansok `CONSTANT`
+
+**Szerkezete**, a két `csomag_neve` attribútum meg kell egyezzen, ha ugynahhoz a csomaghoz tartozik: 
+````VHDL
+PACKAGE csomag_neve IS
+	(Deklarációs rész;)
+END PACKAGE
+
+[PACKAGE BODY csomag_neve IS 
+	(Függvények és eljárások leírása;)
+END csomag_neve;]
+````
+
+példa:
+```VHDL
+LIBRARY ieee;
+USE ieee. Std_logic_vektor.all;
+	PACKAGE példa_csomag IS
+		TYPE állapot 	IS (st1, st2, st3, st4);
+		TYPE szín 	IS (red, green, blue, black);
+		CONSTANT vector : STD_LOGIC_VECTOR (3 downto 0):=”1111”;
+	END példa_csomag;
 ```
