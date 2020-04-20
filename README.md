@@ -23,7 +23,13 @@
 	- [ciklusok: `LOOP`, `FOR/LOOP`, `WHILE/LOOP`, `EXIT`, `NEXT`](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#loop)
 	- [felhasználási példa: véges állapotú automata](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#v%C3%A9ges-%C3%A1llapot%C3%BA-automata)
 - [Téma 7 - Konkurens VHDL utasítások](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-7---konkurens-vhdl-utas%C3%ADt%C3%A1sok-k%C3%B3dfejelszt%C3%A9s-a-konkurencia-felhaszn%C3%A1l%C3%A1sval)	
-- [Téma 8 - Tesztelés]() - [eredeti pdf](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/k%C3%B6nyvek/FPGA%20aramkorok%20tesztelese_2017_2018_v4_2017_11_27_e(1).pdf)
+	- [Szekvenciális VS konkurens utasítások](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#szekvenci%C3%A1lis-vs-konkurens-utas%C3%ADt%C3%A1sok)
+	- [`Generate`](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#generate)
+	- [`Package`](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#package)
+- [Téma 8 - Tesztelés](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-8---tesztel%C3%A9s) - [eredeti pdf](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/k%C3%B6nyvek/FPGA%20aramkorok%20tesztelese_2017_2018_v4_2017_11_27_e(1).pdf)
+	- [Tesztkörnyezet konfigurálása](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#tesztk%C3%B6rnyezet-konfigur%C3%A1l%C3%A1sa)
+- [Téma 9 - System Generator alapú hardver tervezés]()
+
 ---------
 
 # Logikai áramkörök elmélete hülyéknek
@@ -1411,12 +1417,12 @@ Block utasításokban párhuzamosíthatunk, mint alábba példa, vagy a követke
 - (port map és generic map)
 - Típus és alltípus deklarációs
 - Allprogramrészek deklaráslás + megvalósítás  
-- Konstansm változó és signal deklarálás
+- Konstans változó és signal deklarálás
 - Komponens deklarálás
 - File, attributum és konfiguráció deklarálás
 - többszintes egymásba ágyazás: block a blockban
 
-````
+````VHDL
 entity pelda is
  Port (-- S0 : in STD_LOGIC;
            --S1 : in STD_LOGIC;
@@ -1621,6 +1627,7 @@ Tesztelés *áramkörben működés közben*:
 - `Finish` gomb
 
 `TCL` prancsokkal terv létrehozása, az alábbi scriptet futtatvamindne lépés automatikusan végrehajtódik, és az eszköz kész a tesztelésre:
+teljes fájl: [teszt_debug_3.tcl](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/t%C3%A9ma%208%20-%20M%C3%BCk%C3%B6d%C3%A9s%20k%C3%B6zbeni%20tesztel%C3%A9s-20200419/teszt_debug_3.tcl)
 ```
 set terv_nev teszt_7
 set konyvtar C:/Munka/I_Felev/UKDA_2017/L6
@@ -1749,3 +1756,12 @@ A tesztelés lépései:
 6) Konfigurációs fájl létrehozása: `launch_runs impl_1 -to_step write_bitstream`
 7) Hardver  menedzser  megnyitása, kapcsolódás hardvereszközhöz
 
+-----
+# Téma 9 - `System Generator` alapú hardver tervezés
+>Ebben a részben a hallgatók megismerhetik a System Generator környezetet, a megvalósítható feladatokat,  tapasztalatot szereznek System Generator típus terv kialakításában. Megismerkednek a fontosabb modulokkal, adat típusok konverziójával a Simulink környezetből System Generatorba és vissza.
+>
+> A tapasztalatok alapján a hallgatók képesek lesznek egyszerű modelleknek System Generatorban való kialakítására és szimulációjára.
+> 
+> Az alapötletek elsajátítását követően komplexebb feladatokat is meg tudnak valósítani
+
+## System Generator for DSP 
