@@ -1594,6 +1594,158 @@ end if;
 end process szamlalo;
 ````
 
+## Tesztelés működés közben
 Tesztelés *Vivado*ban:
 - Set Up Debug varázsló (Debug Cores integrálással)
 - XDC modul a tervhez kapcsolása
+
+Tesztelés *áramkörben működés közben*:
+- tesztelendő jelek kijelölése
+	- jel HDL forrásodban megjelölése
+	- megjelölésszintetizált áramkörben
+	- jelek megjelölése `tcl`paranccsal való megjelölésre
+- implementációs fázis: tesztelésre használt IP magok terve implementálása, konfigurációs fájl létrehozása
+- Analízis fázis: jelek kiolvasása működés közben
+
+## Tesztkörnyezet konfigurálása
+- SetUpDebug varázslóhasználata
+- jelek megjelölése és IP modulhoz rendelése
+	- `unassigned nets` listából kiválasztás
+	- jelek megjelölése szintetizált áramkörben - jobb klikka  vezetékre  a Sinthesized Design nézetben
+- `Set UP Debug` parancs végrehajtása:
+	- Flow navigátor ablak -> Synthesis -> Synthetized Design -> Set Up Debug vagy Tools -> Set Up Design
+	- Window menü -> Debug nézet -> jelek kijelölése  Unassigned Debu Nets lista -> Set Up Debug 
+-újabb jelek hozzáadása/meglévő elvetése: `Find Nets to ADD`
+- órajel kiválasztása
+-trigger/capture mód megadása
+- `Finish` gomb
+
+`TCL` prancsokkal terv létrehozása, az alábbi scriptet futtatvamindne lépés automatikusan végrehajtódik, és az eszköz kész a tesztelésre:
+```
+set terv_nev teszt_7
+set konyvtar C:/Munka/I_Felev/UKDA_2017/L6
+start_gui
+create_project ${terv_nev} ${konyvtar}/${terv_nev} -part xc7z010clg400-1
+```
+VHDL hardver leíró nyelv beállítása
+```
+set_property target_language VHDL [current_project]
+```
+VHDL forráskódnak a tervhez való csatolása
+```
+add_files -norecurse ${konyvtar}/top_level_2.vhd
+```
+Megkötés állománynak a tervhez valócsatolása
+```
+add_files -fileset constrs_1 -norecurse ${konyvtar}/system_4.xdc
+update_compile_order -fileset sources_1
+update_compile_order -fileset sim_1
+```
+Szintézis futtatás
+```
+launch_runs synth_1
+```
+Várakozás a szintézis befejezésére
+```
+wait_on_run synth_1
+```
+Synthesized Design megnyitása
+```
+pen_run synth_1
+```
+Debug core magnak a tervhez való csatolása
+```
+create_debug_core u_ila_0 ila
+```
+ILA modul konfigurálása
+```
+set_property C_DATA_DEPTH 65536 [get_debug_cores u_ila_0]
+set_property C_TRIGIN_EN true [get_debug_cores u_ila_0]
+set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
+set_property C_ADV_TRIGGER true [get_debug_cores u_ila_0]  #enable advanced trigger mode
+set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0]
+set_property C_EN_STRG_QUAL true [get_debug_cores u_ila_0] #enable Basic capture mode
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU_CNT 1 [get_debug_cores u_ila_0]
+set_property port_width 1 [get_debug_ports u_ila_0/clk
+```
+ILA modul órajelének meghatározása
+```
+connect_debug_port u_ila_0/clk [get_nets [list src_clk_IBUF_BUFG]]
+```
+A Testmodulon probe0 sínszélességének meghatározás
+```
+set_property port_width 3 [get_debug_ports u_ila_0/probe0]
+```
+probe0 bemenetre a start, reset és q_div jelek csatolása
+
+A forráskódban meghatározott jelek nem érhetőek el tesztelésre a szintézist követően, hanem a bemenetek esetében a `start_IBUF` `reset_IBUF` jeleket alkalmazzuk, kimenetek esetében pedig a `q_OBUF` jeleket `connect_debug_port u_ila_0/probe0 [get_nets [list start_IBUF reset_IBUF q_div]]`jeleket kell alkalmazni
+
+Egy újabb bemenet (probe1) létrehozása a tesztmodul bemenetére
+```
+create_debug_port u_ila_0 probe
+```
+Sínszélesség beállítása
+```
+set_property port_width 4 [get_debug_ports u_ila_0/probe1]
+```
+`q_OBUF[0]`, `q_OBUF[1]`, `q_OBUF[2]`, `q_OBUF[3]`  kimenetekneka `probe1` bemeneti portra való csatolása
+```
+connect_debug_port u_ila_0/probe1 [get_nets [list q_O*]]
+```
+Megkötés fájl mentése
+```
+save_constraints_as system_${terv_nev}.xdc
+set_property constrset system_teszt_6.xdc [get_runs synth_1]
+set_property constrset system_teszt_6.xdc [get_runs impl_1
+```
+Implementáció lefuttatása
+```
+aunch_runs impl_1
+wait_on_run impl_1
+```
+Konfigurációs fájl generálás
+```
+launch_runs impl_1 -to_step write_bitstream
+wait_on_run impl_1
+```
+harver megnyitás
+```
+open_hw
+```
+Szerver indítása az FPGA áramkörre való kapcsolódás céljábó
+```
+onnect_hw_server
+```
+Célhardver megnyitása
+```
+open_hw_target
+```
+Konfigurációs.bit fájl és debug_net.ltx beállítása
+```
+set_property PROGRAM.FILE
+${konyvtar}/${terv_nev}/${terv_nev}.runs/impl_1/top_level_2.bit [lindex [get_hw_devices] 1]
+set_property PROBES.FILE 
+${konyvtar}/${terv_nev}/${terv_nev}.runs/impl_1/debug_nets.ltx [lindex [get_hw_devices] 1]
+
+current_hw_device [lindex [get_hw_devices] 1
+```
+hardver frisítése
+```
+refresh_hw_device [lindex [get_hw_devices] 1
+```
+Hardver programozása
+```
+program_hw_devices [lindex [get_hw_devices] 1]
+refresh_hw_device [lindex [get_hw_devices] 1
+```
+
+A tesztelés lépései:
+1) A top_level.vhd modul alapján egy terv létrehozása
+2) Atesztelendő jelek kiválasztása, a debug interfésznek a tervbe való csatolása, a jeleknek a tesztmodulba való csatolása 
+3) Órajeltartomnyok kiválasztása
+4) tesztelő ILA IP modul paraméterezése
+5) terv implementálása, implementáció elindításaa `tcl` parancsablakból: `launch_runs impl_1`
+6) Konfigurációs fájl létrehozása: `launch_runs impl_1 -to_step write_bitstream`
+7) Hardver  menedzser  megnyitása, kapcsolódás hardvereszközhöz
+
