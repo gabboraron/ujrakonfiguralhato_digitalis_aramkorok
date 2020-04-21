@@ -1791,7 +1791,7 @@ DSP modellezés:
 	The Xilinx Blockset is a family of libraries that contain basic System Generator blocks. Some blocks are low-level, providing access to device-specific hardware. Others are high- level, implementing (for example) signal processing and advanced  communications algorithms.
 - **egyszerű áramköri elemek**: regiszterek, összeadók, számlálók, 
 - **digitális jelprocesszálásra szolgáló modulok**: DSP modul, FIR szűrő, Komplex szorzómodul, FFT, Inverz FFT
-- **memória modulok**: FIFO, BRAM, Dual port BRAM
+- **memória modulok**: FIFO, BRAM, Dual port BRAM, FIFO
 - **kommunikációs modulok**: Reed-Solomon Encoder, Reed-Solomon Decoder
 - **típuskonverzió**
 
@@ -1801,7 +1801,7 @@ Könyvtár elérése: `Tools`->`Xilinx`->`Block Add` *vagy* `Xilinx Block Add` g
 System Generator tömbök adattípusai:
 - Boolean
 - Tetszőleges pontosságú fix-pontos
-- Lebegőpontos: *IEEE-754 Standard* ábrázolással: `Single`, `Double`, [`Custom`](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/Lebeg%C5%91pontos%20adatt%C3%ADpus%20-%20tetsz%C5%91leges.gif) - a pontosságtól függően
+- Lebegőpontos: *IEEE-754 Standard* ábrázolással: `Single`, `Double`, [`Custom`](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/Lebeg%C5%91pontos%20adatt%C3%ADpus%20-%20tetsz%C5%91leges.gif) - a pontosságtól függően, a tetszőlegesnek a legnagyobb hardverígénye de a elgnagyobb pontossága is
 Simulink alap adattípus (double *dupla pontosságú lebegőpontos*) Gateway tömbök:
 > *Gateway out modul a Xilinx jeleket visszaalakítják double jelekké*
 - Gateway In - a `doble` típusú Simulink jelet átalakítják `XILINX System Generator` jellé *és* mintavételezési szerepe is van, mintavételezi a folytonos Simulink jeleket
@@ -1813,6 +1813,8 @@ Simulink alap adattípus (double *dupla pontosságú lebegőpontos*) Gateway tö
 than it 
 
 ![Simulink – System Generator közötti adatcsere](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/Simulink%20%E2%80%93%20System%20Generator%20k%C3%B6z%C3%B6tti%20adatcsere.PNG)
+
+	A `Gateway IN` valósítja meg a típuskonverziót a Simulink és FPGA között
 
 ### Jel típusok
 - Előjel nélküli: `Ufix_5_3` - 5 biten ábrázolt: 2 bit az egész részre és 3 bit a törtrészre
