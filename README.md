@@ -29,7 +29,7 @@
 - [Téma 8 - Tesztelés](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-8---tesztel%C3%A9s) - [eredeti pdf](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/k%C3%B6nyvek/FPGA%20aramkorok%20tesztelese_2017_2018_v4_2017_11_27_e(1).pdf)
 	- [Tesztkörnyezet konfigurálása](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#tesztk%C3%B6rnyezet-konfigur%C3%A1l%C3%A1sa)
 - [Téma 9 - System Generator alapú hardver tervezés](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-9---system-generator-alap%C3%BA-hardver-tervez%C3%A9s)
-
+- [Téma 10 - Hardver ko-szimuláció]()
 ---------
 
 # Logikai áramkörök elmélete hülyéknek
@@ -1913,3 +1913,34 @@ példa:
 - `Hardware Co-Simulation` (JTAG or Point-to-point Ethernet) - A ko-szimuláció során a Xilinx tömbökkel megadott rész, a szimuláció futása során az FPGA áramkörben hajtódik végre
 - `Synthesized Checkpoint` - Creates a design checkpoint file (synth_1.dcp) that can then be used in any Vivado IDE project. 
 - `HDL Netlist` - Létrejön egy HDL netliszt, amely szintén felhasználható más tervekben
+
+-----
+# Téma 10 - Hardver ko-szimuláció
+fájlok: [System Generator_ERASMUS_2017_laptoprol_B_2017_12_01.pptx](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/System%20Generator_ERASMUS_2017_laptoprol_B_2017_12_01.pptx)
+> Ebben a részben a hallgató megismerkedik a harver ko-szimulációval. Simulink (System Generator) környezetben megvalósított hardverre lehetőség van a szimuláció futtatása során, hogy a Simulink modelből az az FPGA modulok a szimuláció közben az FPGA áramkörben fussanak le.
+>
+> Ebben a részben System Generator  hardver ko-szimuláció típusú terv létrehozása van bemutatva. Ez az üzemmód lehetővé teszi például egy eszköznek: robot kar, adatgyűjtésre szolgáló modul, Simulink környezethez való csatolását és a rendszereken futó feladatok gyors tesztelését.
+>
+> Nagyon rövid idő alatt van lehetőség ötletek kivitelezésére, megvalósíthatóságának tesztelésére.   A System Generatorban tervezett  FPGA egységből létrehozható  egy IP modul, amely például a Vivado eszközzel integrálható egy nagyobb tervbe. A diákok a modul elsajátítása után képesek lesznek hardver ko-szimulációs típusú feladatok megvalósítására és ötleteikből kiindulva FPGA áramkörbe konkrét feladatokat gyakorlatba ültetni.
+
+- Simulink szimuláció során a modell egy részének az FPGA áramkörben való végrehajtását
+- Simulink és FPGA eszköz közötti kommunikációs interfészt automatikusan létrehozza a System Generator tervezőeszköz, lehet: `JTAG`, `Ethernet`
+- fordítás után létrejön egy Simulink tömb, ezen keresztül megy a kommunikáció a lappal
+
+**FONTOS:** Az FPGA fejlesztőlapot, amelyen szeretnénk a hardver ko-szimulációt futtatni, fel kell telepíteni a számítógépre: [telepítés instrukciók](https://reference.digilentinc.com/reference/software/vivado/board-files?redirect=1
+), [master-board fájl letölltés](https://github.com/Digilent/vivado-boards/archive/master.zip
+)
+
+## Órajel
+### Single clock üzemmód
+Alapértelmezetten a szimuláció csak a `JTAG` órajelre működik, ezért `Multiple clock domain`-t kell létrehozni, a tervet két modulra kell bontani, az egyikben `JTAG` interfész en átvitt jelek kerülnek, a másikon rendszer órajelén működő részek.
+### Multiple clock domain 
+Mindkét modulon külön órajelre sznikronizáljuk a *Simulinkhez kapcsolódó jeleket (modulok) I/O portokat JTAG órajeleket (`jtag_clk`)* és az *FPGA-hoz kapcsolódó kimeneti jeleket (modulok) `sys_clock`*
+
+**Órajel létrehozása:**
+```VHDL
+set_property -dict { PACKAGE_PIN L16   IOSTANDARD LVCMOS33 } [get_ports { sys_clock }];
+create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports { sys_clock }];
+```
+be kell másolni az `.xdc` állományba:
+	netlist_mclk\hwcosim\pwm_mclk.srcs\constrs_1\imports\sysgen\pwm_mclk_clock
