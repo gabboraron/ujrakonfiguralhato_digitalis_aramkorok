@@ -29,7 +29,7 @@
 - [Téma 8 - Tesztelés](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-8---tesztel%C3%A9s) - [eredeti pdf](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/k%C3%B6nyvek/FPGA%20aramkorok%20tesztelese_2017_2018_v4_2017_11_27_e(1).pdf)
 	- [Tesztkörnyezet konfigurálása](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#tesztk%C3%B6rnyezet-konfigur%C3%A1l%C3%A1sa)
 - [Téma 9 - System Generator alapú hardver tervezés](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-9---system-generator-alap%C3%BA-hardver-tervez%C3%A9s)
-- [Téma 10 - Hardver ko-szimuláció]()
+- [Téma 10 - Hardver ko-szimuláció](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#t%C3%A9ma-10---hardver-ko-szimul%C3%A1ci%C3%B3)
 ---------
 
 # Logikai áramkörök elmélete hülyéknek
@@ -1767,7 +1767,7 @@ fájlok: [pptx](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramk
 > Az alapötletek elsajátítását követően komplexebb feladatokat is meg tudnak valósítani
 
 ## System Generator for DSP 
--pontos lebegő és fixpontos implementáció bit és ciklus segítségével
+- pontos lebegő és fixpontos implementáció bit és ciklus segítségével
 - Simulinkből HDL kódot generál
 - Hardver ko-szimuláció
 	
@@ -1776,6 +1776,10 @@ DSP modellezés:
 - Aritmetikai és logikai művelet alapú rendszerek
 - Memória alapú rendszerek
 - Interfész
+
+Teszteléskor az FPGA lábairea kell csatolni: 
+- a jeleket, amelyeket egy külső oszcilloszkóppal szeretnénk tanulmányozn
+- a jeleket, amelyeket egy külső logikai analizátorral szeretnénk tanulmányozni
 
 **Fontosabb alkalmazási területek**
 -jelfeldolgozás:  trigonometirai függvények generálása újrakonfigurálható logikában
@@ -1814,7 +1818,8 @@ than it
 
 ![Simulink – System Generator közötti adatcsere](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/Simulink%20%E2%80%93%20System%20Generator%20k%C3%B6z%C3%B6tti%20adatcsere.PNG)
 
-	A `Gateway IN` valósítja meg a típuskonverziót a Simulink és FPGA között
+	A `Gateway IN` valósítja meg a típuskonverziót a Simulink és FPGA között.
+	Az átmentet az FPGA lap és a Simulink szimulációs program között automatikusan hozza létre a System Generator környezet.
 
 ### Jel típusok
 - Előjel nélküli: `Ufix_5_3` - 5 biten ábrázolt: 2 bit az egész részre és 3 bit a törtrészre
