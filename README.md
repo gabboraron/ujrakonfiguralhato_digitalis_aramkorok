@@ -28,7 +28,7 @@
 	- [`Package`](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#package)
 - [Téma 8 - Tesztelés](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-8---tesztel%C3%A9s) - [eredeti pdf](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/k%C3%B6nyvek/FPGA%20aramkorok%20tesztelese_2017_2018_v4_2017_11_27_e(1).pdf)
 	- [Tesztkörnyezet konfigurálása](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#tesztk%C3%B6rnyezet-konfigur%C3%A1l%C3%A1sa)
-- [Téma 9 - System Generator alapú hardver tervezés]()
+- [Téma 9 - System Generator alapú hardver tervezés](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-9---system-generator-alap%C3%BA-hardver-tervez%C3%A9s)
 
 ---------
 
@@ -131,6 +131,7 @@ A továbbiakban az alapműveleteknek megfelelően bemutatjuk a különböző log
 RAM alapú FPGAba a bekapcsolás után be kell konfigurálni a **bitfolyamot** ami meghatározza, hogy milyen útvonalon áramlanak a jelek a CLB, azaz a logikai tömbök belsejében. Ezért ez lehet egyszer, vagy többször programozható.
 
 ## Modulok:
+fájl: [MEMÓRIA ELEMEK.png](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/mem%C3%B3ria%20elemek.PNG)
 - konfigurálható logikai tömbök: logikai kapuk, kereső táblázat, osztott memória, bistabil áramkörök, multiplexxer áramkörök.
 - ki/be meneti tömbök
 - blockRAM ([BRAM](https://www.nandland.com/articles/block-ram-in-fpga.html))
@@ -1758,10 +1759,155 @@ A tesztelés lépései:
 
 -----
 # Téma 9 - `System Generator` alapú hardver tervezés
->Ebben a részben a hallgatók megismerhetik a System Generator környezetet, a megvalósítható feladatokat,  tapasztalatot szereznek System Generator típus terv kialakításában. Megismerkednek a fontosabb modulokkal, adat típusok konverziójával a Simulink környezetből System Generatorba és vissza.
+fájlok: [pptx](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/T9_KMOOC_System%20Generator_2017_A_v2_2017_12_01.pptx), [pdf](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/UKDA_L3_2017_v3_2017_12_01.pdf)
+> Ebben a részben a hallgatók megismerhetik a System Generator környezetet, a megvalósítható feladatokat,  tapasztalatot szereznek System Generator típus terv kialakításában. Megismerkednek a fontosabb modulokkal, adat típusok konverziójával a Simulink környezetből System Generatorba és vissza.
 >
 > A tapasztalatok alapján a hallgatók képesek lesznek egyszerű modelleknek System Generatorban való kialakítására és szimulációjára.
 > 
 > Az alapötletek elsajátítását követően komplexebb feladatokat is meg tudnak valósítani
 
 ## System Generator for DSP 
+-pontos lebegő és fixpontos implementáció bit és ciklus segítségével
+- Simulinkből HDL kódot generál
+- Hardver ko-szimuláció
+	
+DSP modellezés:
+- Jelfeldolgozás (CORDIC, Cascaded Integrator-Comb (CIC) filters, FFT, IFFT, FIR filter)
+- Aritmetikai és logikai művelet alapú rendszerek
+- Memória alapú rendszerek
+- Interfész
+
+**Fontosabb alkalmazási területek**
+-jelfeldolgozás:  trigonometirai függvények generálása újrakonfigurálható logikában
+-szűrőalgoritmusok: FIR, CIC
+-Gyors Fourier transzformáció
+
+**alkalmazásának előnyei:**
+- Stimulus generálása (Simulink töbökkel)
+- tervezett rendszer analízise (az összes kimenő és átmeneti jel analizálása)
+- DSP tervezés (összetett számítások esetében is)
+
+### Simulink Xilinx eszköztár
+	The Xilinx Blockset is a family of libraries that contain basic System Generator blocks. Some blocks are low-level, providing access to device-specific hardware. Others are high- level, implementing (for example) signal processing and advanced  communications algorithms.
+- **egyszerű áramköri elemek**: regiszterek, összeadók, számlálók, 
+- **digitális jelprocesszálásra szolgáló modulok**: DSP modul, FIR szűrő, Komplex szorzómodul, FFT, Inverz FFT
+- **memória modulok**: FIFO, BRAM, Dual port BRAM
+- **kommunikációs modulok**: Reed-Solomon Encoder, Reed-Solomon Decoder
+- **típuskonverzió**
+
+Könyvtár elérése: `Tools`->`Xilinx`->`Block Add` *vagy* `Xilinx Block Add` gyorsmenüvel
+
+### Adat típusok
+System Generator tömbök adattípusai:
+- Boolean
+- Tetszőleges pontosságú fix-pontos
+- Lebegőpontos: *IEEE-754 Standard* ábrázolással: `Single`, `Double`, [`Custom`](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/Lebeg%C5%91pontos%20adatt%C3%ADpus%20-%20tetsz%C5%91leges.gif) - a pontosságtól függően
+Simulink alap adattípus (double *dupla pontosságú lebegőpontos*) Gateway tömbök:
+> *Gateway out modul a Xilinx jeleket visszaalakítják double jelekké*
+- Gateway In - a `doble` típusú Simulink jelet átalakítják `XILINX System Generator` jellé *és* mintavételezési szerepe is van, mintavételezi a folytonos Simulink jeleket
+- Gateway out - modul a Xilinx jeleket visszaalakítják double jelekké
+#### Simulink – System Generator közti átmenet:
+> Quantization in this context refers to how the tools handle the LSBs of numbers. When a large floating point number is converted to a fixed point number, a lot of “unnecessary” precision is lost. Users must decide whether to “cut the precision off” (truncate) or to round the result for the nearest precision value.
+> 
+> Overflow in this context refers to how the tools handle the MSBs of numbers. When a large floating point number is converted to a fixed point number and the number is too large to be represented by the fixed point number scheme, users must decide whether to allow Wrap (the MSBs are dropped) or to Saturate the result (like when a counter reaches its max value)  so that the maximum number is used for values greater
+than it 
+
+![Simulink – System Generator közötti adatcsere](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/Simulink%20%E2%80%93%20System%20Generator%20k%C3%B6z%C3%B6tti%20adatcsere.PNG)
+
+### Jel típusok
+- Előjel nélküli: `Ufix_5_3` - 5 biten ábrázolt: 2 bit az egész részre és 3 bit a törtrészre
+- Előjeles: `Fix_16_8` - kettes komplemens 16 biten ábrázolva: 8 bit a törtrész
+**Lebegőpontos szám fixpontossá alakítása**kor veszít a pontosságból, el kell dönteni, hogy kerekítjük, vagy levágjuk a biteket, ezt előre a pontossággal adjuk meg.
+Pontosságuk lehet: 
+- full precision   
+- User-specified precision 
+	- kvantálással: Truncate, Round 
+	- Túlcsordulással: Wrap, Saturate, Flag as error
+
+## Bit pontos (bit-true) és ciklus pontos (cycle true) modellezés
+Bit szintű műveletek: `Reinterpret`, `Combine`, `Convert`, `Extract`
+	**Bit pontos (bit-true):** System Generator és a Simulink tömbök határánál, a szimuláció során előállított érték **bit szinten tökéletesen megegyezik a megfelelő pontban a hardver által generált értékkel**
+	**ciklus pontos (cycle true):** a határoknál **a megfelelő értékek a megfelelő időben generálódnak**
+
+## Mintavételezés
+System generator fordítás után **a megfelelő rész a megfelelő mintavételezéssel működjön.**.
+- mintavétlezési periódus egy órajelből (`clk`) és az órajelhez kapcsolódó órajel engedélyező (`CE`) jelből áll elő. Az órajelet engedélyező jel periódusa az órajel periódusának egész számú többszöröse.
+- a mintavételezési periódus alapján  határozza meg, milyen órajel engedélyező jel kell
+- felhasználó két paramétert ad meg: `Simulink system period` and `FPGA clock period` - Meghatározza a skálázási tényezőt a Simulink szimulációs idő  és a hardveres implementációnak megfelelő idők között
+
+## System Generator
+- `Simulink system period`: a mintevételezési periódus legnagyobb közös osztója
+példa:
+	- `P`- Simulink modell periódusa
+	- `C`- FPGA rendszer órajelének periódus
+	- Egy szimuláció amely `k*p` egységet igényel a Simulink szimulációban, `k` órajelet igényel a hardverben (`k*c [ns]`)
+
+**Hibakezelés**
+- Clock Probe
+- Clock Enable Probe
+
+## Modulok importálása:
+- entitások nevei nem egyezhetnek 
+- Két irányú portok nem jelennek meg a System Generatorban mint portok csak a HDL black box modulban
+- órajel (clk) és órajel engedélyező (CE) csak párban működik, `Clk`, `ce std_logic` típusúak
+- Lemenő élre triggerelt kimeneti adat nem alkalmazható
+
+### Black Box Configuration M-Function elemei
+*HDL modul a BlackBox tömbbel importálható*
+- `Top_level` modul neve
+	- Meg kell határozni a `top level entity`-t és meg kell adni az alkalmazott Hardver Leíró Nyelvet: `this_block.setEntityName(‘proba’);`
+	- VHDL Module: `this_block.setTopLevelLanguage('VHDL'); `
+	- Verilog Module: `this_block.setTopLevelLanguage('Verilog');`
+- alkalmazott HDL nyelv (VHDL/Verilog)
+- portok
+	- Bemeneti port hozzáadása: `this_block.addSimulinkInport('din');`
+	- Kimeneti Port hozzáadása: `this_block.addSimulinkOutport('dout');`
+	- Kétirányú port hozzáadása `config_phase = this_block.getConfigPhaseString;  if (strcmpi(config_phase,'config_netlist_interface')) this_block.addInoutport('bidi'); -- Rate and type info should be added here as well end` - Szimulációban nem jelenik meg **!!**
+	- portok leírása:
+	```VHDL
+	din = this_block.port('din'); 
+	dout = this_block.port('dout'); 
+	dout.setWidth(12); 
+	dout.setBinPt(8);
+	dout.makeUnsigned(); 
+	```
+	Vagy
+	```VHDL
+	dout = this_block.port('dout'); 
+	dout.setType('Ufix_12_8'); 
+	```
+	Kétirányú port esetében szimulációs adat mentése
+	```VHDL
+	if (strcmpi(this_block.getConfigPhaseString,'config_netlist_interface')) 
+	bidi_port = this_block.port('bidi'); 
+	bidi_port.setGatewayFileName('bidi.dat'); 
+	end 
+	```
+	- mintavételezési ráta megadása: `setRate` határozható meg egy jel mintavételezési rátája
+	```VHDL
+	setRate, dout.setRate(3); 
+	--Kimeneti portok típusa és kimeneti ráta a bemenet függvényében:
+	input_width = this_block.port('din').width; 
+	input_rate = this_block.port('din').rate; 
+	if (this_block.inputTypesKnown) 
+		dout.setWidth(this_block.port('din').width); 
+	end
+	
+	if (this_block.inputRatesKnown) 
+		dout.setRate(this_block.port('din').rate*2);
+	end  
+	```
+- generikus paraméterek: `addGeneric('dout_width','Integer','12');`
+	- konfigurációs függvényben a Generic paraméter beállításával skálázható a hardver
+- órajel konfig: Egy szinkron órajel (single clock) *vagy* több aszinkron (multilpe independent clock)
+	- órajel (`clk`) és az órajel engedélyező (`ce`) párban kell létezzenek, 
+	- a *ce* és *clk* a névben is szerepelnie kell: `src_clk` és a párja `src_ce` `addClkCEPair('clk_3','ce_3',3);`
+- mintavételezési ráta
+- kapcsolódó állományok
+- van-e benne kombinációs logika
+
+## Kompilálás
+- `IP Catalog` - IP mag hozható létre, hozzáadható a Vivado IP katalógusához, más tervben való alkalmazás céljából
+- `Hardware Co-Simulation` (JTAG or Point-to-point Ethernet) - A ko-szimuláció során a Xilinx tömbökkel megadott rész, a szimuláció futása során az FPGA áramkörben hajtódik végre
+- `Synthesized Checkpoint` - Creates a design checkpoint file (synth_1.dcp) that can then be used in any Vivado IDE project. 
+- `HDL Netlist` - Létrejön egy HDL netliszt, amely szintén felhasználható más tervekben
