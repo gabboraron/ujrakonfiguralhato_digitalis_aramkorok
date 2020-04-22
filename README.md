@@ -30,6 +30,8 @@
 	- [Tesztkörnyezet konfigurálása](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#tesztk%C3%B6rnyezet-konfigur%C3%A1l%C3%A1sa)
 - [Téma 9 - System Generator alapú hardver tervezés](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-9---system-generator-alap%C3%BA-hardver-tervez%C3%A9s)
 - [Téma 10 - Hardver ko-szimuláció](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#t%C3%A9ma-10---hardver-ko-szimul%C3%A1ci%C3%B3)
+- [Téma 11 - Magas szintű szintézis - Bevezető]()
+
 ---------
 
 # Logikai áramkörök elmélete hülyéknek
@@ -1949,3 +1951,240 @@ create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports { s
 ```
 be kell másolni az `.xdc` állományba:
 	netlist_mclk\hwcosim\pwm_mclk.srcs\constrs_1\imports\sysgen\pwm_mclk_clock
+
+----
+
+# Téma 11 - Magas szintű szintézis - Bevezető
+fájl: [High_Level_Synthesis_SZIR_FMR_2017_okt_31_hu_2017_12_01.pptx](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/High_Level_Synthesis_SZIR_FMR_2017_okt_31_hu_2017_12_01.pptx)
+> Ebben a részben a hallgató megismerkedhet a magas szintű szintézissel. A téma keretében rámutatunk a magas szintű szintetizáló eszközök lényegére, vagyis  egy maga szintű programozási nyelven specifikált feladatból lehetőség van hardver modulok létrehozására. A téma keretében részletezve vannak a magas szintű szintetizáló eszközök alkalmazásának előnyei. A hallgatónak a téma elsajátítását követően rálátása lesz a magas szintű szintézisre: milyen szintetizáló eszközök alkalmazhatóak, a fontosabb lépések, részfeladatok, melyeket a HLS eszközök követnek a C, C++, System C specifikációból kiindulva az RTL szintű modell létrehozásáig.
+
+> Megmutatjuk a HLS eszközökkel kapcsolatosan felmerülő kérdéseket. Tárgyalva vannak a HLS alapú tervezésben alkalmazott architektúra  szintű kényszer típusok,  modul hierarchia, interfész, memória, ciklus szintű kényszerek, időkorlátok, iteráció szintű kényszerek.
+
+> A magas szintű szintézisről három előadás keretében mélyítheti el ismereteit a hallgató.
+
+> Az első, bevezető részt követő részben részletekbe menően tárgyaljuk a HLS szintetizálás során a feladatok ütemezését, erőforrás kiosztást, tömb és ciklusoptimalizálási ötleteket.
+
+> A harmadik részben konkrét feladatnak Vivado HLS környezetben való bemutatására kerül sor.
+
+## Beágyazott rendszerek tervezése
+- Bonyolult SoC és multimédia alkalmazások (Hosszú tervezési idő)
+	- Hálózat az integrált áramkörben
+	- Több intelligens erőforrás (több master egység) (CPU, DMA,…)
+	- Több megabájtnyi programkód
+	- A beágyazott rendszeren futó beágyazott operációs rendszer
+	- Osztott memória
+- SoC tervezési problémák
+	- A szoftver komplexitása (az algoritmus komplexitása)
+	- Eszközök a beágyazott hardver tervezéshez/beágyazott szoftver (OP) tervezéshez
+	- A piacra kerülési idő (a hagyományos módszerekkel hosszú )
+	- IP magok újra felhasználása
+	- Magas szintű szintetizáló eszközök alkalmazása
+	- Tervezési lehetőségek  felkutatása
+- A magas szintű szintézis csak egy kis része a magas szintű tervezésnek
+
+### Tervezőeszközök
+	tervező eszköz hozza létre az RTL szintű implementációt
+- Vivado HLS (XILINX)
+- Synopsys (Synphony C Compiler High-Level Synthesis from C/C++ to RTL)
+- Cadence® Stratus™ High-Level Synthesis (HLS) 
+
+### Magas szintű szintézis (HLS)
+[wikipedia](https://en.wikipedia.org/wiki/High-level_synthesis), [xilinx.com/.../esl-design.html](http://www.xilinx.com/products/design-tools/vivado/integration/esl-design.html)
+> **Meghatározás:** automata vagy félautomata módon létrehoz egy RTL szintű leírást egy viselkedési szinten megadott specifikációból.
+> 
+> **Bemenet:** 
+> - Viselkedés szintű specifikáció
+> - Tervezési kényszerek
+> - Könyvtárelemek az elérhető RTL komponensekkel
+>
+> **Kimenet:**
+> - RTL leírás
+> - Teljesítmény értékelés
+> - Milyen gyorsan sikerül a számítást elvégezni?
+> - Mennyi hardver erőforrásra van szükség?
+> - Mennyire hatékonyan sikerült létrehozni egy pipeline struktúrát?
+
+
+> **Magas szintű szintézis** –az algoritmus leírása valamilyen magas szintű programozási nyelven (System C, Ansi C/C++, Matlab)
+>
+> A magas szintű kód analízise, architektúra szinten  kényszereknek való alávetése és megfelelő ütemezése után létrejön egy terv RTL (Register Transfer Level) absztrakciós szinten,  valamilyen hardver leíró nyelven (például VHDL, Verilog).  
+>
+> Tervező eszköz által hardver leíró nyelven létrehozott tervet egy logikai szintetizáló eszközzel szintetizálva elkészül a hardver 
+
+A **hardver tervezés** történhet különböző absztrakciós szinten. Általában alkalmazott absztrakciós szintek:
+- Kapu szintű absztrakció
+- Regiszter szintű absztrakció
+- Algoritmus szintű absztrakció
+
+**A tervező** *leírja a modulok funkcionalitását* és *megtervezi a modulok közötti kommunikációhoz a protokollt*
+A magas szintű **szintetizáló eszköz** *kezeli a mikro-architektúrát (RTL)*, *átalakítja az időkorlát nélküli vagy részlegesen időzített funkcionális kódot teljesen időzített RTL megvalósításra*, *automatikusan létrehozza az órajel szintű részletes hardvert*.
+Az elért (RTL) megvalósításhoz használnak egy hagyományos logikai szintetizáló eszközt,  amely létrehozza a kapu-szintű megvalósítást.
+
+**Automatizált tervezés:**
+- értelmezi egy kívánt viselkedés algoritmus szinten való leírását 
+- létrehoz egy digitális hardvert, amely megvalósítja a tervet
+
+**HLS-re szakirodalomban alkalmazott kifejezések:**
+- C synthesis
+- electronic system-level (ESL) synthesis, 
+- algorithmic synthesis
+- behavioral synthesis
+
+Gyakran **alkalmazott programozási nyelvek:** `C`, `C++`, `SystemC`, `Matlab` kódból képesek hardvert szintetizálni.
+
+**célja:** hardver tervezők sázmára biztosítja a hardver tervezését, tesztelését, ellenőrzését, feladat leírás magas absztrakciós szinten.
+
+**részfeladatai: **
+- Lexikális feldolgozás (Lexical processing)
+- Algoritmus optimalizálása (Algorithm optimization)
+- Vezérlés/Adatfolyam analízis (Control/Dataflow analysis)-
+	- Elvégzendő műveletek felderítése
+	- Adatfüggőségek felderítése
+- Könyvtár processzálás (Library processing) –lehetséges erőforrások keresése az elvégzendő műveletek  megvalósításhoz
+- Erőforrás kiosztása (Resource allocation) -az erőforrások hozzárendelése az elvégzendő műveletekhez (az adatút kialakítása)
+- Erőforrások ütemezése (Scheduling)
+	- Az erőforrások ütemezése (melyik műveletvégző egységet mikor kell működtetni)
+	- Alegységek szinkronizálása
+	- A vezérlőegység kialakítása
+- Funkcionális egységek hozzárendelése (Functional unit binding )
+- Regiszterek csatolása (Register binding)
+- Kimenetek processzálása
+
+**automatikusan alkalmazhatóak kényszerek (megszorítások) az architektúrára:**
+- *Hierarchia* – a modulok hogyan épülnek hierarchikusan egymásra
+- *Interfész (Interface):* Meghatározni milyen interfészen valósul meg kommunikáció különböző modulok között
+- *Memória (Memory)* - Milyen méretű memóriából lehet kialakítani egy tömböt, **ha egy adatsort memóriába tároltam, akkor csak szekvenciálisan tudom kiolvasni vagy beírni** az adatokat
+- *Ciklus szintű kényszerek (Loop)* - Egy adott ciklust hogyan szeretnék megvalósítani (pipeline, párhuzamos)
+- *Alacsony szintű időkorlátok (Low-level timing constraints)* - Milyen frekvencián működik a rendszer?, Két jel között mekkora lehet a maximális késés? Minimum milyen frekvencián mintavételezek egy jelet? 
+- *Iteráció szintű kényszerek*
+
+##### Interfész szintézis
+> A bemeneteket leírva egyszerűen C/C++ nyelven és alkalmazva egy automatizált interfész szintetizáló technológiát, amely az interfészen megoldja az időzítéseket (szinkronizálást) és az interfészhez hozzárendeli a kommunikációs protokollt
+>
+> Kiválasztom a tervezés során az interfész típusát => a tervezőeszköz létrehozza.
+
+**Hardver interfész opciók:**
+- Adatfolyam (streaming)
+- Egy portos BRAM memória
+- Két portos BRAM memória
+- FIFO modulok
+- Kézfogás alapú mechanizmusok
+
+
+#### HLS előnyei
+- Algoritmus szintű absztrakció, 
+	Adat típusok (egész, fix pontos, lebegőpontos aritmetika
+	Interfészek (FIFO, AXI4, AXI4-Lite, AXI4-Stream)
+- Könyvtár elemek széleskörű választéka
+	tetszőleges pontosságú adattípusok
+	Video feldolgozáshoz könyvtári elemek
+	DSP
+	Memóriamodulok
+- Kényszerfeltételekkel definiált architektúra
+	Leghatékonyabb megoldás feltárása
+- Gyorsított ellenőrzés C / C ++ programkód használatával
+	Tesztpad létrehozása
+	Szimuláció
+	Szintézis
+
+#### HLS hátrányai
+- Hatalmas tervezési tér
+	- Komplex tervezési tér feltárás
+	- Több kritériumon alapuló optimalizáló technikák
+		- Minél gyorsabb legyen az algoritmus
+		- Lehető legkevesebb elemet alkalmazzak
+	- Adatcserére alkalmazott szabványok hiánya 
+	- SoC szimulációs idő kulcsfontosságú kérdés
+- A HLS technikának a tervezők által való elfogadása! (nem kis gond)
+	- A beágyazott rendszert tervező (HDL) és a HLS eszközt tervező (C,C++) között egy közös nyelv találása
+		- Beágyazott rendszer tervező HDL
+		- HLS eszköztervező C stb.
+
+#### HLS technikai problémák
+- **PC: Kompilálás:** a cél architektúra teljes mértékben ismert
+- **HLS-sel való tervezés:** a cél architektúra csak parciálisan ismert
+	- **Adatfolyam/szisztolikus tömbök:** RTL leírás
+	- **Adat utat tartalmazó véges állapotú automata:** processzoron futó alkalmazáshoz közel álló leírás
+- **HLS technikai kérdések:**
+	- Kezdeti specifikáció formátum / nyelv?
+	- Specifikáció finomítása : egész számok (előjeles, előjel nélküli, fixpontos aritmetika, lebegőpontos aritmetika)
+		- Matlabban nem igazán foglalkozunk az adattípussal (double)
+	- Ütemezés/Erőforrás hozzárendelés  finomítása: erőforrás kényszerek
+	- Technológiai erőforrás hozzárendelés finomítása (például FPGA áramkörön valósítom meg, milyen családú FPGA)
+
+#### Kezdeti specifikáció formátum
+> C-alapú nyelvek (hardver leíró nyelvek): Handel-C, Silicon-C,Hardware-C ,System-C
+>
+> **gondok:** 
+> - Hogyan fejezzük ki a párhuzamos vagy szekvenciális működést? Adatfolyam alapú / Szekvenciális processzálás / Eseményvezérelt
+> - Hogyan alkalmazzunk  algoritmikus és RTL alapú  leírást
+> - Mit specifikáljunk előre: Ciklusok,  Interfészek?
+> - Hogyan vezessünk be kényszereket, tanácokat?
+
+##### Aritmetika
+**Kérdés:** hogyan térek át lebegőpontos aritmetikáról fixpontos  aritmetikára
+
+Fixpontos aritmetikában a ciklusok kezelése nehezen automatizálható, Például jelfeldolgozás esetén a jelfeldolgozó algoritmus segíthet a fix pontos aritmetika rögzítésére
+
+##### Ütemezés/Erőforrás kiosztás
+Megoldás a **ciklusok** kezelésére: 
+- **Kifejteni**, Loop nest optimization, Loop unrolling 
+- (Static/Dynamic unrolling), **Loop tiling**
+- **Szekvenciálisan megvalósítani**
+ötletek: 
+
+**memóriakiosztás:**
+- általában **erősen felhasználó irányított** => Aktív kutatási terület 
+- **Kommunikáció finomítása** szintén fontos kérdés: Nagymértékben függ a számítási modelltől
+
+##### Szempontok egy modul specifikációjára:
+**C függvény** 
+- A függvény megírása során legelőször a létrehozandó hardver egység specifikációit kell tanulmányozni.
+ - Meg kell határozni a modul bemeneteit és kimeneteit.
+ - A függvény paraméterei képezik a modul bemeneteit, és a függvény visszatérítési értékei pedig a modul kimeneteit.
+ - Fontos az erőforrás takarékosság, ezért optimális adattípusokat kell használni. 
+- Mivel a C nyelv bájt alapú adattípusokra épül, ezért a Vivado HLS rendelkezik egy Arbitrary Precision Data Types nevű könyvtárral, amely segítségével az alkalmazás által megkövetelt pontos adatméreteket használhatjuk. 
+- Egy másik fontos szempont a lebegőpontos műveletek használata, mivel ez nagyban befolyásolhatja a modul erőforrás igényét.  
+
+**Korlátok**
+- A legfontosabb korlátokat a cél FPGA áramkör kiválasztásánál határozzuk meg, a Vivado HLS a technikai adatok alapján végzi el a szintézist. 
+- Egy másik korlát, amelyet a tervező állít be, az az **órajel periódusa** (ns), ez befolyásolja, hogy egy ciklus alatt hány műveletet képes elvégezni a hardveregység.
+
+**Direktívák**
+- különböző irányelvek, amelyeket a Vivado HLS figyelembe vesz a szintetizálás során. 
+- Ezek függvényében optimalizálja a tervezőeszköz a lefordított kódot.
+- A direktívák segítségével pipeline-osíthatunk műveleteket
+	- leoszthatunk műveletcsoportokat több hardver elemre
+	- interfészeket alakíthatunk ki a modulok számára
+	- stb
+- **direktíta típusok:**
+	- **Interfész**: 
+		- globális változókhoz 
+		- `top_level` függvény paramétereihez 
+		- függvény visszatérítési értékéhez rendelhető
+	- **Függvény**: - függvény fejlécére alkalmazhatóak, művelet végrehajtási stratégiákat határozhatnak meg
+	- **ciklusok**:
+		- ciklusokra címkékkel (label) lehet hivatkozni
+		- művelet végrehajtási stratégiák:
+			- Pipeline
+			- Unroll
+			- loop_merge
+			- stb
+	- **Tömbök**: memória hozzárendelés meghatározása
+##### IP mag létrehozása 
+**Specifikáció meghatározása:**
+- a rendszer kimeneteinek, illetve bemeneteinek meghatározása
+- használni kívánt adattípusok, adatméretek meghatározása
+- algoritmus kiválasztása
+- céleszköz kiválasztása
+**Algoritmus implementálása C nyelven** - függvények megírása, a fügvényeket a `top_level` függvény kapcsolja össze
+
+**Teszt fájl (Test Bench)** - segítségével debug-olni, tesztelni, szimulálni lehet a rendszert.
+
+**I/O portok beállítása** - a változókhoz hozzá kell rendelni egy-egy I/O protokollt, hogy kommunikálhasson a modul a rendszer többi elemével
+
+**Kommunikációs interfész hozzárendelése a portokhoz** - a modul sínrendszerre való kapcsolásához szükség van interfész hozzárendelésére, (például AXI4 interfész), ez a Vivado HLS-ben direktívák segítségével
+
+**Szintézis végrehajtása, jelentések elemzése** - újabb optimalizálás elvégzése, újabb direktívák meghatározása
+
+**hardver egység IP magként való exportálása** - EDK-ban vagy Vivado-ban felhasználható formátumban
