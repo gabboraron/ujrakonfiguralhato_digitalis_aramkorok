@@ -31,6 +31,7 @@
 - [Téma 9 - System Generator alapú hardver tervezés](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-9---system-generator-alap%C3%BA-hardver-tervez%C3%A9s)
 - [Téma 10 - Hardver ko-szimuláció](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#t%C3%A9ma-10---hardver-ko-szimul%C3%A1ci%C3%B3)
 - [Téma 11 - Magas szintű szintézis - Bevezető]()
+- [Téma 12 - Magas szintű szintézis II]()
 
 ---------
 
@@ -1990,6 +1991,14 @@ fájl: [High_Level_Synthesis_SZIR_FMR_2017_okt_31_hu_2017_12_01.pptx](https://gi
 
 ### Magas szintű szintézis (HLS)
 [wikipedia](https://en.wikipedia.org/wiki/High-level_synthesis), [xilinx.com/.../esl-design.html](http://www.xilinx.com/products/design-tools/vivado/integration/esl-design.html)
+
+	- Vivado HLS meghatározza melyik műveletet melyik ciklusban kell elvégezni (ütemezés)
+	- Meghatározza melyik művelet végrehajtására, milyen hardveregységet alkalmaz 
+	- Ehhez:
+		- Beépített alapértelmezések betartása
+		- meghatározott alapelvek (direktívák) és kényszerfeltételek felülírják az alapértelmezett beállításokat
+		- Késleltetések és területhasználat kiszámítása az alkalmazott technológia/eszköz függvényében
+
 > **Meghatározás:** automata vagy félautomata módon létrehoz egy RTL szintű leírást egy viselkedési szinten megadott specifikációból.
 > 
 > **Bemenet:** 
@@ -2004,6 +2013,10 @@ fájl: [High_Level_Synthesis_SZIR_FMR_2017_okt_31_hu_2017_12_01.pptx](https://gi
 > - Mennyi hardver erőforrásra van szükség?
 > - Mennyire hatékonyan sikerült létrehozni egy pipeline struktúrát?
 
+**Direktívák prioritása:
+1. Teljesítmény teljesítése (idő  & áteresztőképesség)
+2. Késleltetés (latency)
+3. Területhasználat optimalizálása**
 
 > **Magas szintű szintézis** –az algoritmus leírása valamilyen magas szintű programozási nyelven (System C, Ansi C/C++, Matlab)
 >
@@ -2188,3 +2201,249 @@ Megoldás a **ciklusok** kezelésére:
 **Szintézis végrehajtása, jelentések elemzése** - újabb optimalizálás elvégzése, újabb direktívák meghatározása
 
 **hardver egység IP magként való exportálása** - EDK-ban vagy Vivado-ban felhasználható formátumban
+
+---
+
+# Téma 12 - Magas szintű szintézis II
+
+> Ebben a részben részletesen megnézzük, milyen lehetőségek is vannak magas szintű C, C++ forráskódból hardvert létrehozni. Ugyanabból a forráskódból kiindulva különböző architektúrával rendelkező hardver hozható létre. Tárgyalva van, hogyan is valósul meg a HLS szintetizálás során a műveletek ütemezése, erőforrások kiosztása, tömbökre és ciklusokra milyen optimalizálási kényszerek alkalmazhatóak. Kiemeljük egy C forráskód jellemzőit, amelyek befolyásolják a szintetizálandó hardver struktúráját, erőforrásigényét, a feladat elvégzéséhez szükséges óraciklusok számát.
+
+**A magas szintű szintézis a**
+- `C` forráskódból egy **RTL szintű implementációt hoz létre**
+- kiemeli (**meghatározza**) a **kontroll és adatfeldolgozási részeket**
+- alapértelmezett és felhasználó által **alkalmazott direktívák** (directives) **alapján létrehozza a tervet**
+	C, C++, SystemC / Constraints, Directives **=>** Vivaldo HLS **=>** VHDL, Verilog, SystemC **=>** RTL Export 
+
+## HLS-alapú tervezés és tesztelés folyamata
+![HLS alapú tervezés és tesztelés folyamata](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/HLS-alap%C3%BA%20tervez%C3%A9s%20%C3%A9s%20teszrtel%C3%A9s%20folyamata.PNG)
+
+### Terv megvalósítása direktívák függvényében
+Vegyük az alábbi programrészletet
+```VHDL
+acc=0;
+ciklus: for (i=3;i>=0;i--) {
+	if (i==0) {
+		shift_reg[0]=x;
+	} else {
+		shift_reg[i]=shift_reg[i-1];
+	}
+	acc+=shift_reg[i]*c[i];
+}
+*y=acc;
+```
+**Ugyanaz az erőforrás van alkalmazva minden ciklusban:
+-kevés erőforrás
+-több órajelciklus
+-alacsony teljesítmény**
+![Alapértelmezett terv](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/alap%C3%A9rtelmezett%20terv.jpg)
+
+**Ciklus mindenik iterációjában más hardver erőforrás van alkalmazva
+- nagyobb erőforrásigény
+- Kevesebb órajelciklus
+- Nagyobb áteresztőképesség**
+![Kiterjesztett ciklusok](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/kiterjesztett%20ciklusok.jpg)
+
+**Különböző ciklusok konkurensen vannak alkalmazva:
+- Nagy erőforrásigény
+- Kevesebb órajelciklus
+- Jó áteresztőképesség**
+![Pipeline megvalósítás](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/pipline%20megval%C3%B3s%C3%ADt%C3%A1s.jpg)
+
+### Vezérlkés mehatározása
+Az alábbi szerkezet leprogramozása:
+![Vezérlés meghatározása](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/vez%C3%A9rl%C3%A9s%20meghat%C3%A1roz%C3%A1sa.PNG)
+Alábbi módon:
+```VHDL
+						-- Elvégzendő műveletek kiemelése
+						-- Rd x
+						-- Rd c
+loop: for (i=3;
+	   i>=0;				-- >=
+	   i--) {				--  -
+	if (i==0) {				-- ==
+		shift_reg[0]=x;
+	} else {				--  -
+		shift_reg[i]=shift_reg[i-1];
+	}
+	acc+=shift_reg[i]			-- +
+	*c[i];					-- *
+}
+						-- Wr y
+```
+Kód egyben:
+```VHDL
+void fir_szuro (data_t *y,coef_t c[4],data_t x)
+{	-- FÜGGVÉNY KEZDETE
+static data_t shift_reg[4];
+acc_t acc;
+int i;
+acc=0;
+loop: for (i=3;i>=0;i--) {	-- -- CIKLUS KEZDETE
+if (i==0) {
+shift_reg[0]=x;
+} else {
+shift_reg[i]=shift_reg[i-1];
+}
+acc+=shift_reg[i]*c[i];
+}	-- CIKLUS VÉGE
+*y=acc;
+}	-- FÜGGVÉNY VÉGE
+```
+
+### Ütemezés és erőforrás kiosztás
+```VHDL
+void proba()
+{
+	X1= A+B;
+	X2=C*X1;
+	X3=D*X2;
+	X4=X3-E;
+}
+```
+#### Ütemezés
+> Az  ütemezés meghatározza, hogy egy adott műveletet melyik órajelre fog végrehajtódni figyelembe véve:
+> - A vezérlést
+> - Az adatfolyamot
+> - A tervező által meghatározott megkötéseket (direktívákat)
+> - Az erőforrások kiosztására kényszerfeltételeket lehet meghatározni
+Az adatfüggőséget a műveletek ütemezésénél kötelező betartani
+> A műveletek a vezérlő folyamatban óraciklusokra van leképezve
+>
+> Minden műveletet egy órajelre hajtunk végre
+
+> A technológia és a tervező által meghatározott kényszerfeltételek hatással vannak az ütemezésre 
+>
+> Egy gyorsabb technológia (vagy egy lassabban működő rendszer) lehetővé teszi egy órajel alatt kettő vagy akár több művelet elvégzését
+
+#### Erőforrás kiosztás
+> Meghatározza, hogy minden egyes elvégzendő műveletre, melyik könyvtárelemet alkalmazza
+> - Az erőforrás kiosztásnál figyelembe veszi az egyes komponenseken a késéseket
+> - A felhasználó által megadott kényszerfeltételeket
+Az erőforrás kiosztó leképezi a műveleteket a könyvtárban elérhető hardver elemekre
+> Az erőforrás kiosztó eldönti-alkalmazunk-e megosztott erőforrás
+> - a két szórást egy szorzó modullal vagy két szorzómodullal végezzük
+> - Az összeadásra és kivonásra alkalmazunk egy megosztott összadó-kivonó (addsub) áramkört 
+>
+> A műveletvégző egységek megosztása  (multiplexelés)  befolyásolja az időzítést, az időkorlát meghatározza, hogy alkalmazható-e a megosztott erőforrás
+
+#### C kód jellemzői hardvertervezés megközelítésből
+	**Függvény:** a programkód függvényekbe van szervezve, amely meghatározza a tervezési hierarchiát
+	**Top level Ki/Be menetek:**  a legfelső szinten található függvény argumentumai meghatározzák az RTL hardver interfészének portjeleit
+	**Típusok:** A változókhoz rendelt típusok befolyásolják a hardver teljesítményét és területhasználatát
+	**Ciklusok:** a ciklusok a hardverben való megvalósítása szintén nagymértékben befolyásolják a teljesítményt és területhasználatot:
+	**Tömbök:** befolyásolják  modul ki/bemeneteit és a szűk keresztmetszetet. A tömbök általában memóriaelemekkel vannak megvalósítva. A tömböknek kisebb tömbökre való felosztása csökkenti a műveletvégzéshez szükséges órajel ciklusokat  
+	**Műveletek:** erőforrás megosztás-> terület csökkentés vagy speciális hardver kialakítás-> kitűzött teljesítmény elérése
+##### Függvények és RTL hierarchia
+	Minden egyes függvényből egy RTL blokk jön létre
+	- több függvényt egybe lehet vonni, ezáltal megszüntetni a hierarchiát
+	- Kisebb méretű függvények automatikusan összevonhatóak
+```VHDL
+
+void A() {//A fűggvény }
+void B() {
+E();
+}
+void C() {
+E();
+}
+
+void D() {//A fűggvény }
+
+void A() {//A fűggvény }
+void A() {//A fűggvény }
+void A() {//A fűggvény }
+
+void felso_szint(){
+A();
+B();
+C();
+D();
+}
+```
+	felso_szint ->  A
+			A -> B -> E
+			A -> C -> E
+			A -> D
+#### Top Level IO Port jelei
+**Felső szintű függvény argumentumai** – minden egyes argumentumnak megfelel egy hardver port típus
+
+**Ha függvény argumentumában van megadva egy tömb**
+- A tömb/memória a modulon kívül található
+- Az alkalmazott memória típusa meghatározza a felső szintű függvény IO portjeleit
+- Az interfészen alkalmazott tömbök feloszthatóak (részlegesen vagy teljesen)
+- Teljes particiónálás esetén minden egyes címen található szó egy-egy regiszterre van felosztva
+- Ha a teljesítmény javítható Dual Portos BRAM memóriát kell alkalmazni, ellenkező esetben egy portos
+
+**Standard C típusok:**
+- char  (8 bit), shot (16 bit), int (32 bit), long int (64 bit)
+- unsigned
+- float (32 bit), double (64 bit)
+
+**Tetszőleges pontosságú típusok**
+- `C`: `ap(u)int` típus: (1-1024 bit)
+- `C++`: 
+	- `ap_(u)int` típus (1-1024 bit)
+        - `ap_fixed` típus
+- `C++`/`System C`:
+	- `sc_(u)int` típus  (1-1024 bit)
+	- `sc_fixed`
+
+**Ciklusok** 
+> *Alapértelmezetten a cikluson nincsenek kiterjesztve (szekvenciális megoldás)*
+>
+> minden egyes ciklus iterációs **ugyanabban az állapotban van végrehajtva**, **ugyanazzal az erőforrással van megvalósítva**
+
+> - A ciklusok kifejthetőek, ha előre ismert az iterációk száma és az iterációk száma nem változik
+> - Több erőforrást kell ütemezni, viszont megnő a műveletek mobilitása
+
+**Ütemezés a ciklus optimalizációt követően**
+- az iterációból származó függőség megszűnik
+- műveletek párhuzamosan elvégezhetőek ha az adatfüggőség lehetővé teszi vagy ha művelet  időzítése megengedi
+```VHDL
+void fir_szuro (data_t *y,coef_t c[4],data_t x)
+{
+static data_t shift_reg[4];
+acc_t acc;
+int i;
+acc=0;
+loop: for (i=3;i>=0;i--) {
+if (i==0) {
+shift_reg[0]=x;
+} else {
+shift_reg[i]=shift_reg[i-1];
+}
+acc+=shift_reg[i]*c[i];
+}
+*y=acc;
+}
+```
+
+**HLS-ben alkalmazott tömbök**
+C programkódban alkalmazott tömb az RTL –ben  egy memóriával van megvalósítva, alapértelmezett esetben a tömb egy BRAM (vagy adott esetben FIFO). A tömbök feldarabolhatóak kisebb tömbökre (kisebb méretű memóriákkal megvalósítva). A tömbök összevonhatóak más tömbökkel. A tömbök bármely könyvtárbeli memória erőforrásra leképezhetőek.
+
+**Ütemezés tömb optimalizációt követően**
+Megadott programkód az alapértelmezett beállítások mellett:
+- C port dual portos BRAM
+- Órajelenként lehetővé tesz két beolvasást (mindkét porton egyet-egyet)
+A C port 4 különálló portra való particiónálása esetén
+- mind a négy beolvasás megoldható egy órajel alatt
+- ha az időzítés megengedi az összeadás elvégezhető ugyanabban a ciklusban
+- az eredmény kiírása is elvégezhető ugyanabban a ciklusban 
+
+**Művletek**
+Műveletvégző egységek méretét meghatározza a változok típusa. Szintetizáló eszköz próbálja csökkenteni az elvégzendő műveletek számát 
+csökkenti a területet, de csak miután a kényszerfeltételek teljesítve vannak. 
+
+A műveletekhez 
+- meghatározható milyen hardver erőforrás legyen alkalmazva
+- meghatározható, hogy egy adott erőforrásból hány darabot szeretnénk felhasználni
+
+**C  jóváhagyás és RTL ellenőrzés**
+Két lépésben:
+- Szintézis előtt: C jóváhagyás
+	- Ellenőrizzük, hogy az algoritmus helyes, gyors
+	- Próbapad 
+	- A függvény fölé épül a main 
+- RTL ellenőrzés
+	- Lehetőség ko-szimulációra az eredeti próbapad alapján
+
