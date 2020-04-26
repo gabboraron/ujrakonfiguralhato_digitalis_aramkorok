@@ -32,6 +32,7 @@
 - [Téma 10 - Hardver ko-szimuláció](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#t%C3%A9ma-10---hardver-ko-szimul%C3%A1ci%C3%B3)
 - [Téma 11 - Magas szintű szintézis - Bevezető](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-11---magas-szint%C5%B1-szint%C3%A9zis---bevezet%C5%91)
 - [Téma 12 - Magas szintű szintézis II](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-12---magas-szint%C5%B1-szint%C3%A9zis-ii)
+- [Téma 13 - Magas szintű szintézis III](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#t%C3%A9ma-13---magas-szint%C5%B1-szint%C3%A9zis-iii)
 
 ---------
 
