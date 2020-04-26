@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="szim_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="szim" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="106670000fs"></ZoomStartTime>
+      <ZoomEndTime time="208070001fs"></ZoomEndTime>
+      <Cursor1Time time="185200000fs"></Cursor1Time>
+   </zoom_setting>
+   <WVObjectSize size="13" />
+   <wvobject fp_name="/szim/N" type="array">
+      <obj_property name="ElementShortName">N[11:0]</obj_property>
+      <obj_property name="ObjectShortName">N[11:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/szim/ap_clk" type="logic">
+      <obj_property name="ElementShortName">ap_clk</obj_property>
+      <obj_property name="ObjectShortName">ap_clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/szim/ap_ctrl_done" type="logic">
+      <obj_property name="ElementShortName">ap_ctrl_done</obj_property>
+      <obj_property name="ObjectShortName">ap_ctrl_done</obj_property>
+   </wvobject>
+   <wvobject fp_name="/szim/ap_ctrl_idle" type="logic">
+      <obj_property name="ElementShortName">ap_ctrl_idle</obj_property>
+      <obj_property name="ObjectShortName">ap_ctrl_idle</obj_property>
+   </wvobject>
+   <wvobject fp_name="/szim/ap_ctrl_ready" type="logic">
+      <obj_property name="ElementShortName">ap_ctrl_ready</obj_property>
+      <obj_property name="ObjectShortName">ap_ctrl_ready</obj_property>
+   </wvobject>
+   <wvobject fp_name="/szim/ap_ctrl_start" type="logic">
+      <obj_property name="ElementShortName">ap_ctrl_start</obj_property>
+      <obj_property name="ObjectShortName">ap_ctrl_start</obj_property>
+   </wvobject>
+   <wvobject fp_name="/szim/ap_rst" type="logic">
+      <obj_property name="ElementShortName">ap_rst</obj_property>
+      <obj_property name="ObjectShortName">ap_rst</obj_property>
+   </wvobject>
+   <wvobject fp_name="/szim/x" type="array">
+      <obj_property name="ElementShortName">x[11:0]</obj_property>
+      <obj_property name="ObjectShortName">x[11:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/szim/x_ap_ack" type="logic">
+      <obj_property name="ElementShortName">x_ap_ack</obj_property>
+      <obj_property name="ObjectShortName">x_ap_ack</obj_property>
+   </wvobject>
+   <wvobject fp_name="/szim/x_ap_vld" type="logic">
+      <obj_property name="ElementShortName">x_ap_vld</obj_property>
+      <obj_property name="ObjectShortName">x_ap_vld</obj_property>
+   </wvobject>
+   <wvobject fp_name="/szim/z" type="array">
+      <obj_property name="ElementShortName">z[23:0]</obj_property>
+      <obj_property name="ObjectShortName">z[23:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/szim/z_ap_vld" type="logic">
+      <obj_property name="ElementShortName">z_ap_vld</obj_property>
+      <obj_property name="ObjectShortName">z_ap_vld</obj_property>
+   </wvobject>
+   <wvobject fp_name="/szim/DATA" type="array">
+      <obj_property name="ElementShortName">DATA[0:15]</obj_property>
+      <obj_property name="ObjectShortName">DATA[0:15]</obj_property>
+   </wvobject>
+</wave_config>

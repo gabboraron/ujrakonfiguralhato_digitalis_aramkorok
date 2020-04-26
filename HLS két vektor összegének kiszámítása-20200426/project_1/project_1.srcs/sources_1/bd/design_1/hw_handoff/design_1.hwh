@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Tue Apr 23 18:46:42 2019" VIVADOVERSION="2016.2">
+
+  <SYSTEMINFO ARCH="zynq" DEVICE="7z010" NAME="design_1" PACKAGE="clg400" SPEEDGRADE="-1"/>
+
+  <EXTERNALPORTS>
+    <PORT DIR="I" NAME="ap_ctrl_start" SIGIS="undef"/>
+    <PORT DIR="O" NAME="ap_ctrl_done" SIGIS="undef"/>
+    <PORT DIR="O" NAME="ap_ctrl_idle" SIGIS="undef"/>
+    <PORT DIR="O" NAME="ap_ctrl_ready" SIGIS="undef"/>
+    <PORT CLKFREQUENCY="100000000" DIR="I" NAME="ap_clk" SIGIS="clk" SIGNAME="External_Ports_ap_clk">
+      <CONNECTIONS>
+        <CONNECTION INSTANCE="atlagszamitas_0" PORT="ap_clk"/>
+      </CONNECTIONS>
+    </PORT>
+    <PORT DIR="I" NAME="ap_rst" SIGIS="rst" SIGNAME="External_Ports_ap_rst">
+      <CONNECTIONS>
+        <CONNECTION INSTANCE="atlagszamitas_0" PORT="ap_rst"/>
+      </CONNECTIONS>
+    </PORT>
+    <PORT DIR="I" NAME="x_ap_vld" SIGIS="undef" SIGNAME="External_Ports_x_ap_vld">
+      <CONNECTIONS>
+        <CONNECTION INSTANCE="atlagszamitas_0" PORT="x_ap_vld"/>
+      </CONNECTIONS>
+    </PORT>
+    <PORT DIR="I" LEFT="11" NAME="x" RIGHT="0" SIGIS="data" SIGNAME="External_Ports_x">
+      <CONNECTIONS>
+        <CONNECTION INSTANCE="atlagszamitas_0" PORT="x"/>
+      </CONNECTIONS>
+    </PORT>
+    <PORT DIR="I" LEFT="11" NAME="N" RIGHT="0" SIGIS="data" SIGNAME="External_Ports_N">
+      <CONNECTIONS>
+        <CONNECTION INSTANCE="atlagszamitas_0" PORT="N"/>
+      </CONNECTIONS>
+    </PORT>
+    <PORT DIR="O" LEFT="23" NAME="z" RIGHT="0" SIGIS="data" SIGNAME="atlagszamitas_0_z">
+      <CONNECTIONS>
+        <CONNECTION INSTANCE="atlagszamitas_0" PORT="z"/>
+      </CONNECTIONS>
+    </PORT>
+    <PORT DIR="O" NAME="z_ap_vld" SIGIS="undef" SIGNAME="atlagszamitas_0_z_ap_vld">
+      <CONNECTIONS>
+        <CONNECTION INSTANCE="atlagszamitas_0" PORT="z_ap_vld"/>
+      </CONNECTIONS>
+    </PORT>
+    <PORT DIR="O" NAME="x_ap_ack" SIGIS="undef" SIGNAME="atlagszamitas_0_x_ap_ack">
+      <CONNECTIONS>
+        <CONNECTION INSTANCE="atlagszamitas_0" PORT="x_ap_ack"/>
+      </CONNECTIONS>
+    </PORT>
+  </EXTERNALPORTS>
+
+  <EXTERNALINTERFACES>
+    <BUSINTERFACE BUSNAME="External_Interface_ap_ctrl" NAME="ap_ctrl" TYPE="TARGET">
+      <PORTMAPS>
+        <PORTMAP LOGICAL="start" PHYSICAL="ap_ctrl_start"/>
+        <PORTMAP LOGICAL="done" PHYSICAL="ap_ctrl_done"/>
+        <PORTMAP LOGICAL="idle" PHYSICAL="ap_ctrl_idle"/>
+        <PORTMAP LOGICAL="ready" PHYSICAL="ap_ctrl_ready"/>
+      </PORTMAPS>
+    </BUSINTERFACE>
+  </EXTERNALINTERFACES>
+
+  <MODULES>
+    <MODULE FULLNAME="/atlagszamitas_0" HWVERSION="1.0" INSTANCE="atlagszamitas_0" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="atlagszamitas" VLNV="xilinx.com:hls:atlagszamitas:1.0">
+      <DOCUMENTS/>
+      <PARAMETERS>
+        <PARAMETER NAME="Component_Name" VALUE="design_1_atlagszamitas_0_0"/>
+        <PARAMETER NAME="clk_period" VALUE="10.000000"/>
+        <PARAMETER NAME="machine" VALUE="64"/>
+        <PARAMETER NAME="combinational" VALUE="0"/>
+        <PARAMETER NAME="latency" VALUE="1"/>
+        <PARAMETER NAME="II" VALUE="x"/>
+        <PARAMETER NAME="EDK_IPTYPE" VALUE="PERIPHERAL"/>
+      </PARAMETERS>
+      <PORTS>
+        <PORT DIR="I" NAME="x_ap_vld" SIGIS="undef" SIGNAME="External_Ports_x_ap_vld">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="External_Ports" PORT="x_ap_vld"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="O" NAME="x_ap_ack" SIGIS="undef" SIGNAME="atlagszamitas_0_x_ap_ack">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="External_Ports" PORT="x_ap_ack"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="O" NAME="z_ap_vld" SIGIS="undef" SIGNAME="atlagszamitas_0_z_ap_vld">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="External_Ports" PORT="z_ap_vld"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT CLKFREQUENCY="100000000" DIR="I" NAME="ap_clk" SIGIS="clk" SIGNAME="External_Ports_ap_clk">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="External_Ports" PORT="ap_clk"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" NAME="ap_rst" SIGIS="rst" SIGNAME="External_Ports_ap_rst">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="External_Ports" PORT="ap_rst"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" NAME="ap_start" SIGIS="undef"/>
+        <PORT DIR="O" NAME="ap_done" SIGIS="undef"/>
+        <PORT DIR="O" NAME="ap_idle" SIGIS="undef"/>
+        <PORT DIR="O" NAME="ap_ready" SIGIS="undef"/>
+        <PORT DIR="I" LEFT="11" NAME="x" RIGHT="0" SIGIS="data" SIGNAME="External_Ports_x">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="External_Ports" PORT="x"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" LEFT="11" NAME="N" RIGHT="0" SIGIS="data" SIGNAME="External_Ports_N">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="External_Ports" PORT="N"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="O" LEFT="23" NAME="z" RIGHT="0" SIGIS="data" SIGNAME="atlagszamitas_0_z">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="External_Ports" PORT="z"/>
+          </CONNECTIONS>
+        </PORT>
+      </PORTS>
+      <BUSINTERFACES>
+        <BUSINTERFACE BUSNAME="External_Interface_ap_ctrl" NAME="ap_ctrl" TYPE="TARGET" VLNV="xilinx.com:interface:acc_handshake:1.0">
+          <PARAMETER NAME="LAYERED_METADATA" VALUE="xilinx.com:interface:datatypes:1.0 {start {datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type immediate dependency {} format long minimum {} maximum {}} value 1} bitoffset {attribs {resolve_type immediate dependency {} format long minimum {} maximum {}} value 0}}} done {datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type immediate dependency {} format long minimum {} maximum {}} value 1} bitoffset {attribs {resolve_type immediate dependency {} format long minimum {} maximum {}} value 0}}} idle {datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type immediate dependency {} format long minimum {} maximum {}} value 1} bitoffset {attribs {resolve_type immediate dependency {} format long minimum {} maximum {}} value 0}}} ready {datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type immediate dependency {} format long minimum {} maximum {}} value 1} bitoffset {attribs {resolve_type immediate dependency {} format long minimum {} maximum {}} value 0}}}}"/>
+          <PORTMAPS>
+            <PORTMAP LOGICAL="start" PHYSICAL="ap_start"/>
+            <PORTMAP LOGICAL="done" PHYSICAL="ap_done"/>
+            <PORTMAP LOGICAL="idle" PHYSICAL="ap_idle"/>
+            <PORTMAP LOGICAL="ready" PHYSICAL="ap_ready"/>
+          </PORTMAPS>
+        </BUSINTERFACE>
+      </BUSINTERFACES>
+    </MODULE>
+  </MODULES>
+
+</EDKSYSTEM>
