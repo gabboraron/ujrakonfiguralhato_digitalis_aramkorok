@@ -30,8 +30,8 @@
 	- [Tesztkörnyezet konfigurálása](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#tesztk%C3%B6rnyezet-konfigur%C3%A1l%C3%A1sa)
 - [Téma 9 - System Generator alapú hardver tervezés](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-9---system-generator-alap%C3%BA-hardver-tervez%C3%A9s)
 - [Téma 10 - Hardver ko-szimuláció](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/README.md#t%C3%A9ma-10---hardver-ko-szimul%C3%A1ci%C3%B3)
-- [Téma 11 - Magas szintű szintézis - Bevezető]()
-- [Téma 12 - Magas szintű szintézis II]()
+- [Téma 11 - Magas szintű szintézis - Bevezető](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-11---magas-szint%C5%B1-szint%C3%A9zis---bevezet%C5%91)
+- [Téma 12 - Magas szintű szintézis II](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok#t%C3%A9ma-12---magas-szint%C5%B1-szint%C3%A9zis-ii)
 
 ---------
 
@@ -2208,7 +2208,9 @@ Megoldás a **ciklusok** kezelésére:
 
 > Ebben a részben részletesen megnézzük, milyen lehetőségek is vannak magas szintű C, C++ forráskódból hardvert létrehozni. Ugyanabból a forráskódból kiindulva különböző architektúrával rendelkező hardver hozható létre. Tárgyalva van, hogyan is valósul meg a HLS szintetizálás során a műveletek ütemezése, erőforrások kiosztása, tömbökre és ciklusokra milyen optimalizálási kényszerek alkalmazhatóak. Kiemeljük egy C forráskód jellemzőit, amelyek befolyásolják a szintetizálandó hardver struktúráját, erőforrásigényét, a feladat elvégzéséhez szükséges óraciklusok számát.
 
-**A magas szintű szintézis a**
+fájlok: [HLS két vektor összegének kiszámítása - 20200426](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/tree/master/HLS%20k%C3%A9t%20vektor%20%C3%B6sszeg%C3%A9nek%20kisz%C3%A1m%C3%ADt%C3%A1sa-20200426)
+
+**A magas szintű szintézis**
 - `C` forráskódból egy **RTL szintű implementációt hoz létre**
 - kiemeli (**meghatározza**) a **kontroll és adatfeldolgozási részeket**
 - alapértelmezett és felhasználó által **alkalmazott direktívák** (directives) **alapján létrehozza a tervet**
@@ -2447,3 +2449,11 @@ Két lépésben:
 - RTL ellenőrzés
 	- Lehetőség ko-szimulációra az eredeti próbapad alapján
 
+# Téma 13 - Magas szintű szintézis III
+> Ebben a részben részletesen tárgyaljuk az interfészek kialakítására alkalmazott modul és argumentumszintű kényszereket, direktívákat. A hallgató megismerkedik a Vaivado HLS környezetben alkalmazható kényszer lehetőségekről. Az ötletek elsajátítását követően a diák képes lesz valós feladatok megoldására alkalmazni a HLS tervezőeszközt, és feladatspecifikusan kiválasztani a megfelelő kényszerfeltételeket.
+>
+> Ebben a részben alkalmazzuk a tervezőeszközt egyszerű feladatok megoldására és különböző kényszerfeltételek gyakorlati szinten való alkalmazására. Értelmezzük az eredményeket, exportálva a megoldást System Generator környezetbe, és összehasonlítjuk ugyanarra a feladatra különböző direktíváknak az alkalmazását.
+>
+> Megjelenítve System Generator környezetben a létrehozott hardver modult, azonosíthatjuk a modul szinten és argumentum szinten létrejött protokoll jeleket.
+
+fájlok: [Szemafor HLS megvalósítása](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/tree/master/Szemafor%20HLS%20megval%C3%B3s%C3%ADt%C3%A1sa-20200426),  [HLS_peldak_v4_b_2017_12_01.pdf](https://github.com/gabboraron/ujrakonfiguralhato_digitalis_aramkorok/blob/master/HLS_peldak_v4_b_2017_12_01.pdf)
